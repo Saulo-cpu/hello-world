@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Página ligada ✅</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Arial,sans-serif;background:#eefaf3;color:#12303b;
+       display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+  .caixa{background:#fff;border-radius:18px;padding:34px 26px;max-width:600px;width:100%;text-align:center;
+         box-shadow:0 12px 30px rgba(0,0,0,.15)}
+  h1{margin:0 0 8px;font-size:1.7rem;color:#0f9d58}
+  p{font-size:.95rem;color:#41586a;line-height:1.55;margin:6px 0}
+  .ok{display:inline-block;background:#0f9d58;color:#fff;border-radius:999px;padding:6px 14px;
+      font-weight:800;font-size:.9rem;margin:12px 0 4px}
+  button{background:#0e7490;color:#fff;border:0;border-radius:10px;padding:12px 20px;font-size:.95rem;
+         font-weight:700;cursor:pointer;margin-top:14px;min-height:44px}
+  button:hover{background:#0c5f74}
+  #rel{font-size:.85rem;color:#7a99a6;margin-top:12px;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="caixa">
+  <h1>🐟 Página ligada!</h1>
+  <div class="ok">✅ O PUBLICADOR ESTÁ FUNCIONANDO</div>
+  <p>Se você vê esta caixa colorida, então a publicação deu certo e o endereço abaixo está no ar:</p>
+  <p><strong id="end"></strong></p>
+  <p>Dê um print desta tela (com o endereço visível na barra do navegador) e mande para mim.</p>
+  <button onclick="alert('Tudo funcionando por aqui! 🎉')">Testar o botão</button>
+  <div id="rel"></div>
+</div>
+<script>
+  document.getElementById('end').textContent = window.location.href;
+  function tic(){ document.getElementById('rel').textContent = 'Relógio: ' + new Date().toLocaleTimeString('pt-BR'); }
+  setInterval(tic, 1000); tic();
+</script>
+</body>
+</html>
