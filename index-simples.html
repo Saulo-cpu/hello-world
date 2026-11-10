@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Precificador de Piscicultura — Fácil</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f4f8fa;color:#12303b;margin:0;padding:0}
+.topo{background:#0e7490;color:#fff;padding:16px;margin:0}
+.topo h1{margin:0;font-size:1.15rem}
+.topo p{margin:4px 0 0;font-size:.8rem;opacity:.9}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid #dde7ec;border-radius:12px;padding:16px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:1rem;color:#0e7490}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+label{display:block;font-size:.78rem;font-weight:700;color:#5b7784;margin:0 0 4px}
+input,select{width:100%;padding:9px 10px;border:1px solid #dde7ec;border-radius:8px;font-size:.92rem;background:#fff;color:#12303b;min-height:42px}
+input:focus,select:focus{outline:2px solid #0f9ba8;border-color:#0f9ba8}
+input.num{text-align:right;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+button{background:#0e7490;color:#fff;border:0;border-radius:9px;padding:11px 16px;font-size:.88rem;font-weight:700;cursor:pointer;min-height:44px}
+button:hover{background:#0c6178}
+button.sec{background:#fff;color:#0e7490;border:1px solid #0e7490}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:8px 10px;border-bottom:1px solid #e5eef2;text-align:left}
+th{font-size:.74rem;text-transform:uppercase;letter-spacing:.03em;color:#5b7784;background:#f2f8fa}
+td.val,th.val{text-align:right;font-variant-numeric:tabular-nums}
+tr.res td{font-weight:800}
+.grande{font-size:1.15rem;font-weight:800;color:#0e7490}
+.ok{color:#15803d;font-weight:700}
+.aviso{font-size:.8rem;color:#5b7784;margin-top:8px}
+.badge{display:inline-block;background:#e6f7f9;color:#0e7490;border:1px solid #bfe8ef;border-radius:999px;padding:4px 10px;font-size:.76rem;font-weight:700}
+@media print{.topo,.noprint{display:none!important}.card{break-inside:avoid;border:none;padding:0}}
+</style>
+</head>
+<body>
+<div class="topo"><h1>🐟 Precificador de Piscicultura</h1><p>Custo de produção e preço sugerido — método Embrapa (Casaca &amp; Queiróz)</p></div>
+<div class="wrap">
+<form id="form" autocomplete="off">
+<div class="card">
+<h2>1. Dados gerais</h2>
+<div class="grid">
+<label>Produtor<input type="text" data-k="produtor"></label>
+<label>Localidade<input type="text" data-k="localidade"></label>
+<label>Município<input type="text" data-k="municipio"></label>
+<label>Data da análise<input type="date" data-k="dataAnalise"></label>
+<label>Nº do viveiro<input type="text" data-k="numeroViveiro"></label>
+<label>Área do viveiro (ha)<input class="num" type="number" step="any" data-k="areaViveiro"></label>
+<label>Nº do cultivo<input type="text" data-k="numeroCultivo"></label>
+<label>Estocagem<input type="date" data-k="dataEstocagem"></label>
+<label>Despesca<input type="date" data-k="dataDespesca"></label>
+<label>Elaborador<input type="text" data-k="elaborador"></label>
+</div>
+<p class="aviso" id="msg-periodo"></p>
+</div>
+<div class="card">
+<h2>2. Produção</h2>
+<div class="grid">
+<label>Alevinos estocados (nº)<input class="num" type="number" step="any" data-k="alevinosQtd"></label>
+<label>Preço do alevino (R$/milheiro ou/un)<input class="num" type="number" step="any" data-k="alevinosPrecoUnit"></label>
+<label>Peso médio do alevino (g)<input class="num" type="number" step="any" data-k="alevinosPesoMedio"></label>
+<label>Peixes mortos (nº)<input class="num" type="number" step="any" data-k="qtdPeixesMortes"></label>
+<label>Peso médio final (g)<input class="num" type="number" step="any" data-k="pesoMedioFinal"></label>
+<label>Preço médio de venda (R$/kg)<input class="num" type="number" step="any" data-k="precoMedioVenda"></label>
+</div>
+<p class="aviso" id="msg-producao"></p>
+</div>
+<div class="card">
+<h2>3. Custos operacionais (COE)</h2>
+<div class="grid">
+<label>Ração 1 — quantidade (kg)<input class="num" type="number" step="any" data-k="racao1Qtd"></label>
+<label>Ração 1 — preço (R$/kg)<input class="num" type="number" step="any" data-k="racao1Preco"></label>
+<label>Ração 2 — quantidade (kg)<input class="num" type="number" step="any" data-k="racao2Qtd"></label>
+<label>Ração 2 — preço (R$/kg)<input class="num" type="number" step="any" data-k="racao2Preco"></label>
+<label>Fertilizante orgânico — qtd<input class="num" type="number" step="any" data-k="fertOrgQtd"></label>
+<label>Fertilizante orgânico — preço<input class="num" type="number" step="any" data-k="fertOrgPreco"></label>
+<label>Fertilizante químico — qtd<input class="num" type="number" step="any" data-k="fertQuimQtd"></label>
+<label>Fertilizante químico — preço<input class="num" type="number" step="any" data-k="fertQuimPreco"></label>
+<label>Mão de obra (R$)<input class="num" type="number" step="any" data-k="maoDeObraCusto"></label>
+<label>Pró-labore (R$)<input class="num" type="number" step="any" data-k="prOlaboro"></label>
+<label>Análises de água — qtd<input class="num" type="number" step="any" data-k="analiseAguaQtd"></label>
+<label>Análises de água — preço (R$)<input class="num" type="number" step="any" data-k="analiseAguaPreco"></label>
+<label>Combustível/lubrificante (R$)<input class="num" type="number" step="any" data-k="custoCombustivel"></label>
+<label>Outros custos (R$)<input class="num" type="number" step="any" data-k="outrosCustos"></label>
+</div>
+</div>
+<div class="card">
+<h2>4. Estrutura e financeiro</h2>
+<div class="grid">
+<label>Máquinas — valor total (R$)<input class="num" type="number" step="any" data-k="maquinasValor"></label>
+<label>Vida útil das máquinas (anos)<input class="num" type="number" step="any" data-k="maquinasVidaUtil"></label>
+<label>Materiais/construção — valor (R$)<input class="num" type="number" step="any" data-k="materiaisValor"></label>
+<label>Vida útil dos materiais (anos)<input class="num" type="number" step="any" data-k="materiaisVidaUtil"></label>
+<label>Equipamentos — valor (R$)<input class="num" type="number" step="any" data-k="equipamentosValor"></label>
+<label>Vida útil dos equipamentos (anos)<input class="num" type="number" step="any" data-k="equipamentosVidaUtil"></label>
+<label>Juros do capital (% ao ano)<input class="num" type="number" step="any" data-k="jurosCapitalPct"></label>
+<label>Terra (ha)<input class="num" type="number" step="any" data-k="terraHa"></label>
+<label>Valor da terra (R$/ha)<input class="num" type="number" step="any" data-k="precoTerra"></label>
+<label>Juros da terra (% ao ano)<input class="num" type="number" step="any" data-k="jurosTerraPct"></label>
+<label>Markup desejado (%)<input class="num" type="number" step="any" data-k="markup"></label>
+</div>
+</div>
+<p class="aviso noprint">Os valores são salvos automaticamente neste navegador. Use <strong>Salvar cópia</strong> para gerar um arquivo e <strong>Carregar cópia</strong> para restaurar.</p>
+<div class="row noprint">
+<button type="button" id="btn-salvar">💾 Salvar cópia</button>
+<button type="button" id="btn-carregar" class="sec">📂 Carregar cópia</button>
+<button type="button" id="btn-imprimir" class="sec">🖨️ Imprimir / PDF</button>
+<button type="button" id="btn-reset" class="sec">↺ Reiniciar</button>
+</div>
+</form>
+<section class="card" id="resultados"></section>
+<p class="aviso noprint" style="text-align:center">Baseado nas planilhas “Custo de produção de peixes” de Jorge de Matos Casaca e Fernanda Queiróz e Silva (Embrapa).</p>
+</div>
+<input type="file" id="file-in" accept=".json,application/json" hidden>
+<script>
+/* ============ ESTADO PADRAO ============ */
+var S = {
+  produtor:"", localidade:"", municipio:"", dataAnalise:"", numeroViveiro:"", areaViveiro:0,
+  numeroCultivo:"", dataEstocagem:"", dataDespesca:"", elaborador:"",
+  alevinosQtd:0, alevinosPrecoUnit:0, alevinosPesoMedio:0, qtdPeixesMortes:0, pesoMedioFinal:0, precoMedioVenda:0,
+  racao1Qtd:0, racao1Preco:0, racao2Qtd:0, racao2Preco:0,
+  fertOrgQtd:0, fertOrgPreco:0, fertQuimQtd:0, fertQuimPreco:0,
+  maoDeObraCusto:0, prOlaboro:0, analiseAguaQtd:0, analiseAguaPreco:0, custoCombustivel:0, outrosCustos:0,
+  maquinasValor:0, maquinasVidaUtil:10, materiaisValor:0, materiaisVidaUtil:10, equipamentosValor:0, equipamentosVidaUtil:5,
+  jurosCapitalPct:10, terraHa:0, precoTerra:0, jurosTerraPct:6, markup:30
+};
+
+/* ============ HELPERS ============ */
+function num(v){ if(v===null||v===undefined||v==="") return 0; var n=Number(String(v).replace(",",".")); return isNaN(n)?0:n; }
+function brl(v){ return "R$ " + num(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function brlKg(v){ return num(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}) + " R$/kg"; }
+function pct(v){ return num(v).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}) + "%"; }
+function kg(v){ return num(v).toLocaleString("pt-BR",{maximumFractionDigits:0}) + " kg"; }
+
+/* ============ MOTOR DE CALCULO ============ */
+function calcular(){
+  var est = new Date(S.dataEstocagem), des = new Date(S.dataDespesca);
+  var periodo = (S.dataEstocagem && S.dataDespesca && !isNaN(est) && !isNaN(des)) ? Math.round((des - est)/86400000) : 0;
+
+  var pecesVendidos = Math.max(0, num(S.alevinosQtd) - num(S.qtdPeixesMortes));
+  var producaoKg = pecesVendidos * num(S.pesoMedioFinal) / 1000;
+  var sobrevivencia = num(S.alevinosQtd) > 0 ? pecesVendidos * 100 / num(S.alevinosQtd) : 0;
+  var taxaCrescimento = (periodo > 0 && num(S.pesoMedioFinal) > 0) ? (num(S.pesoMedioFinal) - num(S.alevinosPesoMedio)) / periodo : 0;
+
+  var custoAlevinos = num(S.alevinosQtd) * num(S.alevinosPrecoUnit);
+  var custoRacao = num(S.racao1Qtd)*num(S.racao1Preco) + num(S.racao2Qtd)*num(S.racao2Preco);
+  var custoFert = num(S.fertOrgQtd)*num(S.fertOrgPreco) + num(S.fertQuimQtd)*num(S.fertQuimPreco);
+  var custoAnalises = num(S.analiseAguaQtd)*num(S.analiseAguaPreco);
+
+  var coeItens = [
+    ["Alevinos", custoAlevinos],
+    ["Ração", custoRacao],
+    ["Fertilizantes", custoFert],
+    ["Mão de obra", num(S.maoDeObraCusto)],
+    ["Pró-labore", num(S.prOlaboro)],
+    ["Análises de água", custoAnalises],
+    ["Combustível/lubrificante", num(S.custoCombustivel)],
+    ["Outros custos", num(S.outrosCustos)]
+  ];
+  var coeTotal = 0; for(var i=0;i<coeItens.length;i++){ coeTotal += coeItens[i][1]; }
+
+  function dep(valor, anos, residual){ return (num(valor)>0 && num(anos)>0) ? num(valor)*(residual/100)/num(anos) : 0; }
+  var depMaq = dep(S.maquinasValor, S.maquinasVidaUtil, 90);
+  var depMat = dep(S.materiaisValor, S.materiaisVidaUtil, 90);
+  var depEqu = (num(S.equipamentosValor)>0 && num(S.equipamentosVidaUtil)>0) ? num(S.equipamentosValor)/num(S.equipamentosVidaUtil) : 0;
+  var custoImplantacao = num(S.maquinasValor)+num(S.materiaisValor)+num(S.equipamentosValor);
+  var depreciacaoAnual = depMaq+depMat+depEqu;
+
+  var cotTotal = coeTotal + depreciacaoAnual;
+  var jurosCap = num(S.jurosCapitalPct)/100*custoImplantacao;
+  var jurosTerra = num(S.precoTerra)*num(S.terraHa)*num(S.jurosTerraPct)/100;
+  var ctTotal = cotTotal + jurosCap + jurosTerra;
+
+  var receitaBruta = producaoKg * num(S.precoMedioVenda);
+  var margemBruta = receitaBruta - coeTotal;
+  var margemLiquida = receitaBruta - cotTotal;
+  var mbPct = receitaBruta>0 ? margemBruta*100/receitaBruta : 0;
+  var mlPct = receitaBruta>0 ? margemLiquida*100/receitaBruta : 0;
+  var produtividade = (num(S.areaViveiro)>0 && periodo>0) ? producaoKg*365/(num(S.areaViveiro)*periodo) : 0;
+  var conversao = producaoKg>0 ? (num(S.racao1Qtd)+num(S.racao2Qtd))/producaoKg : 0;
+
+  var coePorKg = producaoKg>0 ? coeTotal/producaoKg : 0;
+  var cotPorKg = producaoKg>0 ? cotTotal/producaoKg : 0;
+  var ctPorKg = producaoKg>0 ? ctTotal/producaoKg : 0;
+
+  var nivelCOE = num(S.precoMedioVenda)>0 ? coeTotal/num(S.precoMedioVenda) : 0;
+  var nivelCOT = num(S.precoMedioVenda)>0 ? cotTotal/num(S.precoMedioVenda) : 0;
+  var recCapDenom = receitaBruta - cotTotal - depreciacaoAnual;
+  var recuperacaoCapital = recCapDenom > 0 ? custoImplantacao/recCapDenom : -1;
+
+  var basePreco = ctPorKg;
+  var precoSugerido = basePreco>0 ? basePreco*(1+num(S.markup)/100) : 0;
+  var lucroUnico = precoSugerido - basePreco;
+
+  return {
+    periodo:periodo, pecesVendidos:pecesVendidos, producaoKg:producaoKg, sobrevivencia:sobrevivencia,
+    taxaCrescimento:taxaCrescimento, coeItens:coeItens, coeTotal:coeTotal,
+    depMaq:depMaq, depMat:depMat, depEqu:depEqu, custoImplantacao:custoImplantacao, depreciacaoAnual:depreciacaoAnual,
+    cotTotal:cotTotal, ctTotal:ctTotal, jurosCap:jurosCap, jurosTerra:jurosTerra,
+    receitaBruta:receitaBruta, margemBruta:margemBruta, margemLiquida:margemLiquida, mbPct:mbPct, mlPct:mlPct,
+    produtividade:produtividade, conversao:conversao, coePorKg:coePorKg, cotPorKg:cotPorKg, ctPorKg:ctPorKg,
+    nivelCOE:nivelCOE, nivelCOT:nivelCOT, recuperacaoCapital:recuperacaoCapital,
+    basePreco:basePreco, precoSugerido:precoSugerido, lucroUnico:lucroUnico
+  };
+}
+/* ============ RENDERIZACAO ============ */
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+function renderResultados(){
+  var R = calcular();
+  function card(titulo, valor, sub, cor){
+    return '<div class="card" style="padding:12px;margin:0"><div style="font-size:.74rem;text-transform:uppercase;letter-spacing:.03em;color:#5b7784;font-weight:700">'+esc(titulo)+'</div>'+
+      '<div style="font-size:1.2rem;font-weight:800;margin-top:4px;color:'+cor+'">'+esc(valor)+'</div>'+
+      (sub?'<div style="font-size:.76rem;color:#5b7784;margin-top:2px">'+esc(sub)+'</div>':'')+'</div>';
+  }
+  var h = "";
+  h += '<h2 style="margin:0 0 10px;color:#0e7490">Resultado do cálculo</h2>';
+  h += '<p class="aviso" style="margin:0 0 12px">Período de cultivo: <strong>'+R.periodo+' dias</strong> · Peixes vendidos: <strong>'+num(R.pecesVendidos).toLocaleString("pt-BR")+'</strong> · Produção estimada: <strong>'+kg(R.producaoKg)+'</strong></p>';
+  h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px">';
+  h += card("Receita bruta", brl(R.receitaBruta), brl(R.precoMedioVenda)+"/kg × "+kg(R.producaoKg), "#0e7490");
+  h += card("Margem bruta", brl(R.margemBruta), pct(R.mbPct)+" sobre a receita", R.margemBruta>=0?"#15803d":"#b91c1c");
+  h += card("Margem líquida", brl(R.margemLiquida), pct(R.mlPct)+" sobre a receita", R.margemLiquida>=0?"#15803d":"#b91c1c");
+  h += card("Produtividade", kg(R.produtividade)/"ha/ano", "", "#b45309");
+  h += card("Conversão alimentar", num(R.conversao).toFixed(2)+" kg/kg", "ração aplicada / produção", "#7e22ce");
+  h += card("Preço sugerido ("+pct(S.markup)+" markup)", brl(R.precoSugerido), "base: "+brlKg(R.basePreco)+" (CT)", "#0e7490");
+  h += '</div>';
+
+  h += '<h3 style="color:#0e7490;font-size:.95rem;margin:10px 0 6px">Custos operacionais (COE)</h3><table><thead><tr><th>Item</th><th class="val">Valor (R$)</th></tr></thead><tbody>';
+  for(var i=0;i<R.coeItens.length;i++){
+    if(R.coeItens[i][1]>0 || S.coMostrarZeros){ h+='<tr><td>'+esc(R.coeItens[i][0])+'</td><td class="val">'+brl(R.coeItens[i][1])+'</td></tr>'; }
+  }
+  h+='<tr class="res"><td>COE Total</td><td class="val">'+brl(R.coeTotal)+'<input type="hidden" value="'+brl(R.coeTotal)+'"></td></tr>';
+  h+='</tbody></table><p class="aviso">Nas tabelas, linhas zeradas ficam ocultas — preencha conforme sua realidade.</p>';
+
+  h += '<h3 style="color:#0e7490;font-size:.95rem;margin:16px 0 6px">Depreciação e custo total do viveiro</h3><table><thead><tr><th>Componente</th><th class="val">Valor</th><th class="val">Deprec./ano</th></tr></thead><tbody>';
+  h+='<tr><td>Máquinas</td><td class="val">'+brl(S.maquinasValor)+'</td><td class="val">'+brl(R.depMaq)+'</td></tr>';
+  h+='<tr><td>Materiais/construção (90% residual)</td><td class="val">'+brl(S.materiaisValor)+'</td><td class="val">'+brl(R.depMat)+'</td></tr>';
+  h+='<tr><td>Equipamentos</td><td class="val">'+brl(S.equipamentosValor)+'</td><td class="val">'+brl(R.depEqu)+'</td></tr>';
+  h+='<tr class="res"><td>Custo total do viveiro</td><td class="val">'+brl(R.custoImplantacao)+'</td><td class="val">'+brl(R.depreciacaoAnual)+'</td></tr>';
+  h+='</tbody></table>';
+
+  h += '<h3 style="color:#0e7490;font-size:.95rem;margin:16px 0 6px">Resumo de custos por quilo produzido</h3><table><thead><tr><th>Indicador</th><th class="val">R$/kg</th></tr></thead><tbody>';
+  h+='<tr><td>COE por kg</td><td class="val">'+brlKg(R.coePorKg)+'</td></tr>';
+  h+='<tr><td>COT por kg (+depreciação)</td><td class="val">'+brlKg(R.cotPorKg)+'</td></tr>';
+  h+='<tr><td>CT por kg (+juros capital '+pct(S.jurosCapitalPct)+' e terra '+pct(S.jurosTerraPct)+')</td><td class="val">'+brlKg(R.ctPorKg)+'</td></tr>';
+  h+='</tbody></table>';
+
+  h += '<h3 style="color:#0e7490;font-size:.95rem;margin:16px 0 6px">Indicadores técnicos</h3><table><thead><tr><th>Indicador</th><th class="val">Valor</th></tr></thead><tbody>';
+  h+='<tr><td>Taxa de sobrevivência</td><td class="val">'+pct(R.sobrevivencia)+'</td></tr>';
+  h+='<tr><td>Taxa de crescimento diária</td><td class="val">'+num(R.taxaCrescimento).toFixed(1)+' g/dia</td></tr>';
+  h+='<tr><td>Ponto de equilíbrio operacional (COE)</td><td class="val">'+kg(R.nivelCOE)+'</td></tr>';
+  h+='<tr><td>Ponto de equilíbrio operacional (COT)</td><td class="val">'+kg(R.nivelCOT)+'</td></tr>';
+  if(R.recuperacaoCapital>0){ h+='<tr><td>Recuperação do capital (ciclos)</td><td class="val">'+num(R.recuperacaoCapital).toFixed(2)+'</td></tr>'; }
+else { h+='<tr><td>Recuperação do capital</td><td class="val" style="color:#b91c1c">com os custos atuais, não há lucro suficiente para recuperar o investimento</td></tr>'; }
+  h+='</tbody></table>';
+
+  if(R.precoSugerido>0){
+    h += '<h3 style="color:#0e7490;font-size:.95rem;margin:16px 0 6px">Cenários de preço (markup sobre o CT)</h3><table><thead><tr><th>Markup</th><th class="val">Preço sugerido</th><th class="val">Lucro por kg</th></tr></thead><tbody>';
+    var mks=[10,20,30,40,50,60];
+    for(var j=0;j<mks.length;j++){
+      var mk=mks[j], pr=R.ctPorKg*(1+mk/100);
+      h+='<tr'+(mk===num(S.markup)?' style="background:#e6f7f9;font-weight:700"':'')+'><td>'+mk+'%</td><td class="val">'+brl(pr)+'</td><td class="val">'+brl(pr-R.ctPorKg)+'</td></tr>';
+    }
+    h+='</tbody></table>';
+  }
+
+  document.getElementById("resultados").innerHTML = h;
+
+  document.getElementById("msg-periodo").textContent = R.periodo>0 ? ("Período calculado: "+R.periodo+" dias entre estocagem e despesca.") : "Informe as datas de estocagem e despesca.";
+  document.getElementById("msg-producao").textContent = R.producaoKg>0 ? ("Produção estimada: "+kg(R.producaoKg)+" ("+num(R.pecesVendidos).toLocaleString("pt-BR")+" peixes, sobrevivência "+pct(R.sobrevivencia)+")") : "Informe quantidade de alevinos, mortalidade e peso médio final.";
+}
+/* ============ EVENTOS E PERSISTENCIA ============ */
+var STORE_KEY = "precificador_facil_v1";
+
+function salvarLocal(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }
+  catch(e){ /* sem armazenamento no navegador */ }
+}
+
+function carregarLocal(){
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return;
+    var st = JSON.parse(raw);
+    for(var k in S){ if(Object.prototype.hasOwnProperty.call(st,k)) S[k]=st[k]; }
+  }catch(e){}
+}
+
+function aplicarFormulario(){
+  var els = document.querySelectorAll("[data-k]");
+  for(var i=0;i<els.length;i++){
+    var el = els[i], k = el.getAttribute("data-k");
+    if(k in S){ el.value = (S[k]===null||S[k]===undefined)?"" : String(S[k]).replace(".",","); }
+  }
+}
+
+function lerFormulario(){
+  var els = document.querySelectorAll("[data-k]");
+  for(var i=0;i<els.length;i++){
+    var el = els[i], k = el.getAttribute("data-k");
+    var v = el.value.trim();
+    if(el.type==="number" || el.classList.contains("num")){ S[k] = num(v); }
+    else { S[k] = v; }
+  }
+}
+
+function recalcularTudo(){
+  renderResultados();
+  salvarLocal();
+  atualizarIndicadorSalvo();
+}
+
+var ultimoSalvo = "";
+function atualizarIndicadorSalvo(){
+  var ok = true;
+  try{ localStorage.setItem(STORE_KEY+"_probe","1"); localStorage.removeItem(STORE_KEY+"_probe"); }
+  catch(e){ ok=false; }
+  var avisoEl = document.querySelector(".aviso.noprint");
+  if(avisoEl && !ok){ avisoEl.textContent = "Atenção: este navegador bloqueou o armazenamento local — use Salvar cópia para não perder os dados."; }
+}
+
+document.addEventListener("input", function(ev){
+  if(ev.target && ev.target.getAttribute && ev.target.getAttribute("data-k")){
+    lerFormulario();
+    recalcularTudo();
+  }
+});
+
+/* Botoes */
+document.getElementById("btn-salvar").addEventListener("click", function(){
+  var dados = JSON.stringify(S, null, 2);
+  var blob = new Blob([dados], {type:"application/json"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href=url; a.download="precificador-piscicultura-copia.json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  alert("Cópia salva! Guarde o arquivo em local seguro.");
+});
+
+document.getElementById("btn-carregar").addEventListener("click", function(){
+  document.getElementById("file-in").click();
+});
+document.getElementById("file-in").addEventListener("change", function(ev){
+  var file = ev.target.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      var st = JSON.parse(e.target.result);
+      for(var k in S){ if(Object.prototype.hasOwnProperty.call(st,k)) S[k]=st[k]; }
+      aplicarFormulario();
+      recalcularTudo();
+      alert("Dados carregados!");
+    }catch(err){ alert("Não foi possível ler o arquivo escolhido."); }
+  };
+  reader.readAsText(file);
+  ev.target.value = "";
+});
+
+document.getElementById("btn-imprimir").addEventListener("click", function(){ window.print(); });
+document.getElementById("btn-reset").addEventListener("click", function(){
+  if(!confirm("Isso vai apagar todos os valores digitados. Continuar?")) return;
+  for(var k in S){ if(typeof S[k]==="number") S[k]=0; else S[k]=""; }
+  S.maquinasVidaUtil=10; S.materiaisVidaUtil=10; S.equipamentosVidaUtil=5; S.jurosCapitalPct=10; S.jurosTerraPct=6; S.markup=30;
+  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+  aplicarFormulario();
+  recalcularTudo();
+});
+
+/* ============ INICIALIZACAO ============ */
+function inicio(){
+  carregarLocal();
+  aplicarFormulario();
+  renderResultados();
+  atualizarIndicadorSalvo();
+}
+inicio();
+</script>
+</body>
+</html>
