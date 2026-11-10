@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Precificador de Piscicultura — versão offline</title>
+<style>
+.app-root{--bg:#f4f8fa;--surface:#ffffff;--ink:#12303b;--ink2:#5b7784;--line:#dde7ec;--accent:#0e7490;--accent2:#0f9ba8;--green:#15803d;--orange:#b45309;--purple:#7e22ce;--red:#b91c1c;--blue:#1d4ed8;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:40px}
+@media (prefers-color-scheme:dark){.app-root{--bg:#0d1b20;--surface:#162a31;--ink:#e5f1f5;--ink2:#9db4bd;--line:#26414b;--accent:#22b8cf;--accent2:#2dd4bf}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{font-size:1.6rem}
+.brand-title{font-weight:800;font-size:1.05rem;line-height:1.2}
+.brand-sub{font-size:.75rem;color:var(--ink2);margin-top:2px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn-reset{background:transparent;border:1px solid var(--line);color:var(--ink2);padding:8px 12px;border-radius:8px;font-size:.8rem;cursor:pointer;min-height:40px}
+.btn-reset:hover{border-color:var(--accent);color:var(--accent)}
+.save-badge{font-size:.72rem;color:var(--ink2);white-space:nowrap}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--line);scrollbar-width:thin}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--ink2);border-radius:999px;padding:8px 14px;font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap;min-height:40px}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.content{max-width:1180px;margin:0 auto;padding:22px 16px}
+.fade{animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{font-size:1.3rem;margin:0 0 6px}
+h3{font-size:1rem;margin:22px 0 8px;color:var(--accent)}
+.hint{font-size:.82rem;color:var(--ink2);margin:0 0 16px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:12px 0}
+label{display:block;font-size:.8rem;font-weight:600;color:var(--ink2);margin-bottom:6px}
+input.inp,select.inp{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:.9rem;background:var(--surface);color:var(--ink);min-height:40px}
+input.inp:focus,select.inp:focus{outline:2px solid var(--accent2);border-color:var(--accent2)}
+input.num{text-align:right;font-variant-numeric:tabular-nums}
+.tbl{width:100%;border-collapse:collapse;font-size:.86rem;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:10px 0}
+.tbl th{background:rgba(14,116,144,.08);text-align:left;padding:9px 8px;font-size:.76rem;letter-spacing:.02em;color:var(--ink2);border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover{background:rgba(14,116,144,.04)}
+.tbl td.calc{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl tr.total td{background:rgba(14,116,144,.1);font-weight:800}
+.tbl tr.hl td{background:rgba(15,155,168,.12)}
+.subtotal{background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:8px 12px;font-size:.86rem;margin:10px 0}
+.info{background:rgba(14,116,144,.07);border-left:3px solid var(--accent);padding:8px 12px;border-radius:6px;font-size:.82rem;margin:10px 0}
+.infobox{background:rgba(14,116,144,.07);border-left:3px solid var(--accent);padding:10px 12px;border-radius:6px;font-size:.86rem;margin:8px 0;grid-column:1/-1}
+.note{font-size:.76rem;color:var(--ink2);margin-top:14px}
+.resumo-linha{display:flex;flex-wrap:wrap;gap:18px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.88rem;margin-top:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
+.card-ind{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(2,23,32,.04)}
+.card-ind .lbl{font-size:.74rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);font-weight:700}
+.card-ind .val{font-size:1.25rem;font-weight:800;margin-top:6px;font-variant-numeric:tabular-nums}
+.card-ind .sub{font-size:.76rem;color:var(--ink2);margin-top:3px}
+.val.blue{color:var(--blue)}.val.green{color:var(--green)}.val.orange{color:var(--orange)}.val.purple{color:var(--purple)}.val.red{color:var(--red)}
+details.orient{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:18px}
+details.orient summary{cursor:pointer;font-weight:700;font-size:.86rem;color:var(--accent)}
+details.orient ul{margin:8px 0 0;padding-left:18px;font-size:.82rem;color:var(--ink2);line-height:1.6}
+.foot{max-width:1180px;margin:26px auto 0;padding:14px 16px;font-size:.72rem;color:var(--ink2);border-top:1px solid var(--line)}
+.modal{position:fixed;inset:0;background:rgba(2,23,32,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.show{display:flex}
+.modal-card{background:var(--surface);border-radius:12px;padding:22px;max-width:420px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.modal-card h4{margin:0 0 10px;font-size:1rem}
+.modal-card p{font-size:.86rem;color:var(--ink2);margin:0 0 16px}
+.modal-card button{margin-right:8px}
+@media print{*{background:#fff!important;color:#111!important}.tabs,.toolbar{display:none!important}.app-root{padding:0}.content{max-width:none;padding:0 10mm}.tbl{display:table;width:100%;border-collapse:collapse}.tbl th,.tbl td{border:1px solid #888;padding:3px 5px;font-size:9pt}.tbl tr:hover{background:transparent}input.inp,select.inp{border-color:transparent;background:transparent;padding:0 2px;font-size:9pt}.grid2{grid-template-columns:repeat(3,1fr)}label{font-size:8pt;color:#333}.cards{display:flex;flex-wrap:wrap;gap:6px}.card-ind{border:1px solid #bbb;background:#f7f7f7;padding:6px;margin-bottom:6px;box-shadow:none;page-break-inside:avoid}.card-ind .val{font-size:11pt}.note,.hint,.info{font-size:8pt}.foot{border-top:1px solid #aaa;font-size:8pt}}
+@media (max-width:640px){.tbl{display:block;overflow-x:auto;white-space:nowrap}.brand-sub{display:none}.content{padding:16px 12px}.topbar{padding:12px}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="modal" id="modal"><div class="modal-card"><h4 id="modal-title">Aviso</h4><p id="modal-text"></p><button class="btn-reset" id="modal-ok" style="border-color:var(--accent);color:var(--accent)">Fechar</button></div></div>
+<script>
+/* =====================================================================
+   PRECIFICADOR DE PISCICULTURA — método Embrapa (Casaca & Queiróz)
+   Arquivo único, 100% offline. Sem dependências externas.
+   ===================================================================== */
+"use strict";
+/* ===================== MOTOR DE CÁLCULO (puro) ===================== */
+const defValue = v => (v === "" || v === null || v === undefined ? 0 : Number(v));
+const seguranca = x => (typeof x === "number" && isFinite(x) && !isNaN(x) ? x : 0);
+const fmt = (v, d = 2) => {
+  if (v === null || v === undefined) return "—";
+  if (typeof v !== "number" || !isFinite(v) || isNaN(v)) return "—";
+  return v.toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d });
+};
+const fmtMoeda = v => {
+  if (v === null || v === undefined) return "—";
+  if (typeof v !== "number" || !isFinite(v) || isNaN(v)) return "—";
+  return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+};
+function computeAll(S) {
+  const q = S.quantitativos, p = S.percentuais, cul = S.cultivo;
+  const periodoCultivo = cul.dataEstocagem && cul.dataDespesca
+    ? Math.round((new Date(cul.dataDespesca) - new Date(cul.dataEstocagem)) / 86400000) : 0;
+
+  const totalMaquinas = S.maquinas.reduce((s, i) => s + defValue(i.qtd) * defValue(i.preco), 0);
+  const totalMateriais = S.materiais.reduce((s, i) => s + defValue(i.qtd) * defValue(i.preco), 0) + defValue(S.maoDeObraConstrucao);
+  const valorEquipamentos = S.equipamentos.reduce((s, i) => s + defValue(i.qtd) * defValue(i.preco), 0);
+  const deprecEquip = S.equipamentos.reduce((s, i) =>
+    s + (defValue(i.vidaUtil) > 0 ? (defValue(i.qtd) * defValue(i.preco)) / defValue(i.vidaUtil) : 0), 0);
+
+  const alevinosTotalQtd = defValue(q.alevinosQtd);
+  const alevinosPrecoMedio = alevinosTotalQtd > 0 ? (alevinosTotalQtd * defValue(q.alevinosPrecoUnit)) / alevinosTotalQtd : 0;
+
+  const estercoTon = defValue(p.producaoEstercoDia) > 0 && defValue(p.materiaSecaEsterco) > 0
+    ? (defValue(q.animais) * defValue(q.pesoAnimais) * (defValue(p.producaoEstercoDia) / 100) * periodoCultivo) / 1000 : 0;
+
+  const volumeAterro = defValue(q.comprimentoAterro) > 0 && defValue(q.alturaAterro) > 0
+    ? ((defValue(q.baseMaiorAterro) + defValue(q.baseMenorAterro)) / 2) * defValue(q.comprimentoAterro) * defValue(q.alturaAterro) * 1.2 : 0;
+  const horasMaquinasCalc = volumeAterro > 0 ? volumeAterro / 30 : 0;
+  const horasMaquinaTotal = defValue(q.horasMaquinaManual) || horasMaquinasCalc;
+
+  const producaoTotalKg = S.especies.reduce((s, e) => s + defValue(e.qtd), 0);
+  const receitaPescado = S.especies.reduce((s, e) => s + defValue(e.qtd) * defValue(e.precoUnit), 0);
+  const receitaBruta = receitaPescado + defValue(S.outrasReceitas);
+  const precoMedioVenda = producaoTotalKg > 0 ? receitaPescado / producaoTotalKg : 0;
+  const pesoMedioFinalGlobal = producaoTotalKg > 0
+    ? (S.especies.reduce((s, e) => s + defValue(e.qtd) * defValue(e.pesoMedioFinal), 0) / producaoTotalKg) : 0;
+  const biomassaInicial = (defValue(q.alevinosPesoMedio) * alevinosTotalQtd) / 1000;
+
+  const depConstrucao = defValue(S.vidaUtilConstrucao) > 0 ? (totalMaquinas / defValue(S.vidaUtilConstrucao)) * 0.9 : 0;
+  const depAbastecimento = defValue(S.vidaUtilConstrucao) > 0 ? (totalMateriais / defValue(S.vidaUtilConstrucao)) * 0.9 : 0;
+  const custoTotalViveiro = totalMaquinas + totalMateriais + valorEquipamentos;
+  const depreciacaoAnualTotal = depConstrucao + depAbastecimento + deprecEquip;
+
+  const coeItens = [
+    { nome: "Alevinos", valor: alevinosTotalQtd * alevinosPrecoMedio },
+    { nome: "Mão de obra + encargos", valor: defValue(q.maoDeObraCultivoHoras) * defValue(q.maoDeObraCultivoValor) },
+    { nome: "Alimentação/ração", valor: defValue(q.racao1Qtd) * defValue(q.racao1Preco) + defValue(q.racao2Qtd) * defValue(q.racao2Preco) },
+    { nome: "Fertilizantes orgânicos", valor: defValue(q.fertOrg1Qtd) * defValue(q.fertOrg1Preco) + defValue(q.fertOrg2Qtd) * defValue(q.fertOrg2Preco) },
+    { nome: "Fertilizantes químicos", valor: defValue(q.fertQuim1Qtd) * defValue(q.fertQuim1Preco) + defValue(q.fertQuim2Qtd) * defValue(q.fertQuim2Preco) },
+    { nome: "Calagem", valor: defValue(q.calcarioQtd) * defValue(q.calcarioPreco) + defValue(q.calVirgemQtd) * defValue(q.calVirgemPreco) },
+    { nome: "Combustível", valor: defValue(q.combustivelQtd) * defValue(q.combustivelPreco) },
+    { nome: "Energia elétrica", valor: defValue(q.energiaQtd) * defValue(q.energiaPreco) },
+    { nome: "Análise da água", valor: defValue(q.analiseAguaQtd) * defValue(q.analiseAguaPreco) },
+    { nome: "Transporte", valor: defValue(q.transporteQtd) * defValue(q.transportePreco) },
+    { nome: "Assistência técnica", valor: defValue(q.assistenciaQtd) * defValue(q.assistenciaPreco) },
+    { nome: "Gastos administrativos e financeiros", valor: defValue(q.gastosAdm) },
+    { nome: "Medicamentos e produtos químicos", valor: defValue(q.medicamentos) },
+    { nome: "Outros custos operacionais", valor: defValue(q.outrosOperacionais) },
+    { nome: "Manutenção", valor: defValue(S.manutencaoConstrucao) + defValue(S.manutencaoEquipamentos) },
+    { nome: "Arrendamento", valor: defValue(q.arrendamento) }
+  ];
+  const coeTotal = coeItens.reduce((s, i) => s + i.valor, 0);
+  const cotTotal = coeTotal + defValue(q.proLaboreSalario) + depreciacaoAnualTotal;
+  const jurosCapital = (defValue(p.jurosCapital) / 100) * custoTotalViveiro;
+  const jurosTerra = defValue(q.precoTerra) * defValue(q.terraHa) * defValue(p.jurosTerra) / 100;
+  const custoOportunidade = jurosCapital + jurosTerra;
+  const custoTotal = cotTotal + custoOportunidade;
+
+  const racaoQtdTotal = defValue(q.racao1Qtd) + defValue(q.racao2Qtd);
+  const ind = {
+    periodoCultivo,
+    areaViveiro: defValue(cul.areaViveiro),
+    quantidadePeixes: seguranca(producaoTotalKg / pesoMedioFinalGlobal),
+    densidade: seguranca(alevinosTotalQtd / (defValue(cul.areaViveiro) * 10000)),
+    sobrevivencia: seguranca(((producaoTotalKg * 1000 / pesoMedioFinalGlobal) * 100) / alevinosTotalQtd),
+    taxaCrescimento: seguranca((pesoMedioFinalGlobal - defValue(q.alevinosPesoMedio)) / periodoCultivo),
+    produtividade: seguranca(producaoTotalKg * 365 / (defValue(cul.areaViveiro) * periodoCultivo)),
+    conversaoAlimentar: seguranca(racaoQtdTotal / (producaoTotalKg - biomassaInicial)),
+    rb: receitaBruta,
+    rbKg: seguranca(receitaBruta / producaoTotalKg),
+    coe: coeTotal,
+    coeKg: seguranca(coeTotal / producaoTotalKg),
+    cot: cotTotal,
+    cotKg: seguranca(cotTotal / producaoTotalKg),
+    ct: custoTotal,
+    ctKg: seguranca(custoTotal / producaoTotalKg),
+    mbu: seguranca((receitaBruta - coeTotal) / producaoTotalKg),
+    mb: seguranca(((receitaBruta - coeTotal) / receitaBruta) * 100),
+    mlu: seguranca((receitaBruta - cotTotal) / producaoTotalKg),
+    ml: seguranca(((receitaBruta - cotTotal) / receitaBruta) * 100),
+    nivelamentoCOE: seguranca(coeTotal / precoMedioVenda),
+    nivelamentoCOT: seguranca(cotTotal / precoMedioVenda),
+    prelonCOE: seguranca(coeTotal / producaoTotalKg),
+    prelonCOT: seguranca(cotTotal / producaoTotalKg),
+    pontoEquilibrioOp: seguranca(depreciacaoAnualTotal / (precoMedioVenda - seguranca(coeTotal / producaoTotalKg))),
+    custoRacaoKg: seguranca((defValue(q.racao1Qtd) * defValue(q.racao1Preco) + defValue(q.racao2Qtd) * defValue(q.racao2Preco)) / producaoTotalKg),
+    custoFertKg: seguranca((defValue(q.fertOrg1Qtd) * defValue(q.fertOrg1Preco) + defValue(q.fertOrg2Qtd) * defValue(q.fertOrg2Preco)) / producaoTotalKg),
+    custoMaoObraKg: seguranca((defValue(q.maoDeObraCultivoHoras) * defValue(q.maoDeObraCultivoValor) + defValue(q.proLaboreSalario)) / producaoTotalKg),
+    recuperacaoCapital: seguranca(custoTotalViveiro / ((receitaBruta - cotTotal) + depreciacaoAnualTotal)),
+    custoImplantacao: custoTotalViveiro
+  };
+
+  const bioComp = S.biometrias.map((b, idx) => {
+    if (!b.data || b.pesoMedio === "" || Number(b.pesoMedio) <= 0) return null;
+    const dias = Math.round((new Date(b.data) - new Date(cul.dataEstocagem)) / 86400000);
+    if (isNaN(dias) || dias < 0) return null;
+    const pesoPrimeira = Number((S.biometrias.find(x => x.data && Number(x.pesoMedio) > 0) || {}).pesoMedio) || defValue(q.alevinosPesoMedio);
+    const ganhoDia = dias > 0 ? (Number(b.pesoMedio) - pesoPrimeira) / dias : 0;
+    return {
+      idx: idx + 1, dias, peso: Number(b.pesoMedio), ganhoDia,
+      viveiroKgDia: ganhoDia * defValue(q.alevinosQtd) / 1000,
+      pec: dias > 0 ? (Number(b.pesoMedio) * 1000) / defValue(cul.areaViveiro) : 0,
+      produtividade: (Number(b.pesoMedio) * defValue(q.alevinosQtd) * 365) / (defValue(cul.areaViveiro) * dias)
+    };
+  }).filter(Boolean);
+
+  return {
+    S, D: {
+      periodoCultivo, totalMaquinas, totalMateriais, valorEquipamentos, deprecEquip,
+      alevinosTotalQtd, alevinosPrecoMedio, estercoTon, volumeAterro, horasMaquinasCalc, horasMaquinaTotal,
+      producaoTotalKg, receitaBruta, receitaPescado, precoMedioVenda, pesoMedioFinalGlobal, biomassaInicial,
+      depConstrucao, depAbastecimento, custoTotalViveiro, depreciacaoAnualTotal,
+      coeItens, coeTotal, cotTotal, jurosCapital, jurosTerra, custoOportunidade, custoTotal,
+      ind, bioComp, dolar: defValue(S.dolar), margemMarkup: defValue(S.margemMarkup), markupModalidade: S.markupModalidade
+    }
+  };
+}
+/* ===================== FIM DO MOTOR ===================== */
+
+/* ===================== ESTADO DEFAULT ===================== */
+function hojeISO() {
+  const d = new Date(); const off = d.getTimezoneOffset();
+  return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10);
+}
+function defaultState() {
+  return {
+    tab: "geral",
+    cultivo: { produtor: "", localidade: "", municipio: "", dataAnalise: hojeISO(), numeroViveiro: "", areaViveiro: 0, numeroCultivo: "", dataEstocagem: "", dataDespesca: "", elaborador: "" },
+    especies: [
+      { nome: "Tilápia", pesoMedioFinal: 800, qtd: 0, precoUnit: 0 },
+      { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
+      { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
+      { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
+      { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
+      { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 }
+    ],
+    outrasReceitas: 0, dolar: 5.4,
+    percentuais: { jurosCapital: 0, jurosTerra: 0, producaoEstercoDia: 0, materiaSecaEsterco: 0 },
+    quantitativos: {
+      terraHa: 0, precoTerra: 0, horasMaquinaManual: 0, comprimentoAterro: 0, alturaAterro: 0, baseMaiorAterro: 0, baseMenorAterro: 0,
+      animais: 0, pesoAnimais: 0, estercoProduzido: 0, volumeAterro: 0, horasCalculadas: 0,
+      alevinosQtd: 0, alevinosPesoMedio: 0, alevinosPrecoUnit: 0,
+      maoDeObraCultivoHoras: 0, maoDeObraCultivoValor: 0,
+      racao1Qtd: 0, racao1Preco: 0, racao2Qtd: 0, racao2Preco: 0,
+      fertOrg1Qtd: 0, fertOrg1Preco: 0, fertOrg2Qtd: 0, fertOrg2Preco: 0,
+      fertQuim1Qtd: 0, fertQuim1Preco: 0, fertQuim2Qtd: 0, fertQuim2Preco: 0,
+      calcarioQtd: 0, calcarioPreco: 0, calVirgemQtd: 0, calVirgemPreco: 0,
+      combustivelQtd: 0, combustivelPreco: 0, energiaQtd: 0, energiaPreco: 0,
+      analiseAguaQtd: 0, analiseAguaPreco: 0, transporteQtd: 0, transportePreco: 0,
+      assistenciaQtd: 0, assistenciaPreco: 0, proLaboreSalario: 0,
+      gastosAdm: 0, medicamentos: 0, outrosOperacionais: 0, arrendamento: 0
+    },
+    maquinas: [
+      { id: 1, nome: "Trator de esteira", unidade: "h", qtd: 0, preco: 0 },
+      { id: 2, nome: "Retroescavadeira", unidade: "h", qtd: 0, preco: 0 },
+      { id: 3, nome: '"Scraper" rebocado', unidade: "h", qtd: 0, preco: 0 },
+      { id: 4, nome: "Caminhão-caçamba", unidade: "h", qtd: 0, preco: 0 },
+      { id: 5, nome: "Rolo compactador", unidade: "h", qtd: 0, preco: 0 },
+      { id: 6, nome: "Outras máquinas", unidade: "h", qtd: 0, preco: 0 }
+    ],
+    vidaUtilConstrucao: 0,
+    materiais: [
+      { id: 1, nome: "Tubos concreto", unidade: "Unidade", qtd: 0, preco: 0 },
+      { id: 2, nome: "Tubos PVC", unidade: "m", qtd: 0, preco: 0 },
+      { id: 3, nome: "Joelho PVC", unidade: "Unidade", qtd: 0, preco: 0 },
+      { id: 4, nome: "Tijolos", unidade: "Milheiro", qtd: 0, preco: 0 },
+      { id: 5, nome: "Cimento", unidade: "Sacos", qtd: 0, preco: 0 },
+      { id: 6, nome: "Areia", unidade: "m³", qtd: 0, preco: 0 },
+      { id: 7, nome: "Pedra britada", unidade: "m³", qtd: 0, preco: 0 },
+      { id: 8, nome: "Madeira", unidade: "m³", qtd: 0, preco: 0 },
+      { id: 9, nome: "Ferro", unidade: "kg", qtd: 0, preco: 0 },
+      { id: 10, nome: "Outros (materiais + projetos)", unidade: "Unidade", qtd: 0, preco: 0 }
+    ],
+    maoDeObraConstrucao: 0, manutencaoConstrucao: 0,
+    equipamentos: [
+      { id: 1, nome: "Rede", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 2, nome: "Tarrafa", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 3, nome: "Tanque-rede", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 4, nome: "Aerador", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 5, nome: "Motobomba", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 6, nome: "Comedouro", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 7, nome: "Poço", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 8, nome: "Instalações de frio", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 9, nome: "Veículo", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 10, nome: "Depósito/escritório", unidade: "m²", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 11, nome: "Instalações elétricas", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 12, nome: "Gerador", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 13, nome: "Balança", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 14, nome: "Oxímetro", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 15, nome: "Kit de análise", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 }
+    ],
+    manutencaoEquipamentos: 0,
+    biometrias: Array.from({ length: 12 }, () => ({ data: "", pesoMedio: "" })),
+    parametrosPadrao: ["Temperatura (°C)", "Oxigênio (mg/L)", "pH", "Alcalinidade (mg/L)", "Dureza (mg/L)",
+      "Transparência (cm)", "Volumetria (mL/100 L)", "Amônia total (mg/L)", "Nitrato (mg/L)", "Nitrito (mg/L)",
+      "Ferro (mg/L)", "Ortofosfato (mg/L PO₄)", "Sulfeto (mg/L)", "Gás carbônico (mg/L)", "DBO (mg/L)", "DQO (mg/L)",
+      "Coliformes totais (nmp/100mL)", "Coliformes fecais (nmp/100mL)", "Sólidos sedimentáveis (mL/L)", "Condutividade (µS/cm)"],
+    analises: null, // criado na inicialização
+    margemMarkup: 30, markupModalidade: "cot"
+  };
+}
+
+/* ===================== PERSISTÊNCIA ===================== */
+const STORAGE_KEY = "precipisc_v1";
+let saveStatus = "";
+function persist() { /* definido na parte 2 */ }
+/* CSS complementar injetado via JS (classe de aviso flutuante) */
+(function injectExtraCSS() {
+  const css = ".toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#12303b;color:#fff;padding:12px 18px;border-radius:10px;font-size:.86rem;z-index:99;opacity:0;transition:all .3s ease;max-width:90vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.25)}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.err{background:#b91c1c}";
+  const st = document.createElement("style");
+  st.textContent = css;
+  document.head.appendChild(st);
+})();
+
+/* ===================== PERSISTÊNCIA REAL ===================== */
+function persist() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(S));
+    const now = new Date();
+    saveStatus = "Salvo automaticamente às " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    updateSaveBadge();
+  } catch (e) {
+    saveStatus = "Sem armazenamento interno neste navegador — use Salvar/Carregar arquivo.";
+  }
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const st = JSON.parse(raw);
+    if (st && typeof st === "object") return st;
+  } catch (e) { /* ignora */ }
+  return null;
+}
+function updateSaveBadge() {
+  const b = document.getElementById("save-badge");
+  if (b) b.textContent = saveStatus;
+}
+function deepMerge(base, over) {
+  if (Array.isArray(over)) {
+    const out = Array.isArray(base) ? base.slice() : [];
+    over.forEach((v, i) => { out[i] = deepMerge(out[i], v); });
+    return out;
+  }
+  if (over !== null && typeof over === "object") {
+    const out = base !== null && typeof base === "object" ? { ...base } : {};
+    Object.keys(over).forEach(k => { out[k] = deepMerge(out[k], over[k]); });
+    return out;
+  }
+  return over === undefined ? base : over;
+}
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "precificador-piscicultura-dados.json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+  showToast("Arquivo de dados gerado. Guarde-o em local seguro.");
+}
+function pickJSONFile(cb) {
+  const inp = document.createElement("input");
+  inp.type = "file"; inp.accept = ".json,application/json";
+  inp.onchange = () => { if (inp.files && inp.files[0]) cb(inp.files[0]); };
+  inp.click();
+}
+function importJSONFile(file) {
+  const fr = new FileReader();
+  fr.onload = () => {
+    try {
+      const st = JSON.parse(fr.result);
+      if (!st || typeof st !== "object" || Array.isArray(st)) throw new Error("formato inesperado");
+      S = deepMerge(defaultState(), st);
+      if (!S.analises) S.analises = parametrosPadraoToAnalises();
+      initAnaliseDates();
+      persist(); render();
+      showToast("Dados carregados com sucesso!");
+    } catch (e) {
+      showToast("Não foi possível ler este arquivo. Selecione um JSON exportado pelo próprio precificador.", true);
+    }
+  };
+  fr.readAsText(file);
+}
+function showToast(msg, isError) {
+  const t = document.createElement("div");
+  t.className = "toast" + (isError ? " err" : "");
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add("show"));
+  setTimeout(() => { t.classList.remove("show"); setTimeout(() => { if (t.parentNode) t.remove(); }, 400); }, 3400);
+}
+function parametrosPadraoToAnalises() {
+  const pp = defaultState().parametrosPadrao;
+  return pp.map(p => ({ parametro: p, data: "", resultado: "" }));
+}
+function initAnaliseDates() {
+  if (!S.analises || !S.analises.length) {
+    S.analises = parametrosPadraoToAnalises();
+    return;
+  }
+  const d = cultivoDataHoje();
+  S.analises.forEach(a => { if (!a.data && d) a.data = d; });
+}
+function cultivoDataHoje() {
+  return (S.cultivo && S.cultivo.dataAnalise) ? S.cultivo.dataAnalise : hojeISO();
+}
+
+/* ===================== NAVEGAÇÃO E ATUALIZAÇÃO LIVE ===================== */
+function setPath(obj, path, val) {
+  const parts = String(path).split(".");
+  let cur = obj;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const k = parts[i];
+    if (!(k in cur) || cur[k] == null) return;
+    cur = cur[k];
+  }
+  const last = parts[parts.length - 1];
+  if (last === "") return;
+  cur[last] = val;
+}
+function getTabConfig(id) {
+  return TABS.find(t => t.id === id) || TABS[0];
+}
+function switchTab(id) {
+  S.tab = id;
+  persist();
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function onFieldChange(ev) {
+  const el = ev.target.closest("[data-path]");
+  if (!el) return;
+  const p = el.getAttribute("data-path");
+  let v = el.value;
+  if (el.getAttribute("data-num") === "1") {
+    if (v === "" || v === "-") v = 0; else v = Number(v.replace(",", "."));
+    if (isNaN(v)) v = 0;
+  }
+  setPath(S, p, v);
+  persist();
+  updateLive();
+}
+function triggerFileDownload(file) {
+  const inp = document.createElement("input");
+  inp.type = "file";
+  inp.webkitdirectory = false;
+  inp.onclick = () => { /* apenas leitura */ };
+  inp.onchange = () => {
+    const f = inp.files && inp.files[0];
+    if (f) readTextFile(f, txt => {
+      const blob = new Blob([txt], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "precificador.html";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    });
+  };
+  inp.click();
+}
+function readTextFile(file, cb) {
+  const fr = new FileReader();
+  fr.onload = () => cb(fr.result);
+  fr.readAsText(file);
+}
+
+/* ===================== RENDER: ESTRUTURA ===================== */
+function cardHTML(label, valor, sub, cor) {
+  return '<div class="card-ind"><div class="lbl">' + esc(label) + '</div><div class="val ' + (cor || "") + '">' + valor + "</div>" + (sub ? '<div class="sub">' + esc(sub) + "</div>" : "") + "</div>";
+}
+function esc(s) {
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function escAttr(s) {
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function inputNum(value, path) {
+  return '<input type="number" min="0" step="any" class="inp num" data-path="' + escAttr(path) + '" data-num="1" value="' + (Number(value) || 0) + '">';
+}
+function inputTxt(value, path) {
+  return '<input type="text" class="inp" data-path="' + escAttr(path) + '" value="' + escAttr(value) + '">';
+}
+function inputDate(value, path) {
+  return '<input type="date" class="inp" data-path="' + escAttr(path) + '" value="' + escAttr(value || "") + '">';
+}
+function selectHTML(value, path, options) {
+  return '<select class="inp" data-path="' + escAttr(path) + '">' + options.map(o => '<option value="' + escAttr(o.v) + '"' + (String(value) === String(o.v) ? " selected" : "") + ">" + esc(o.l) + "</option>").join("") + "</select>";
+}
+function outSpan(key, cls) {
+  return '<span class="' + (cls || "") + '" data-out="' + escAttr(key) + '">—</span>';
+}
+function fmtOut(key, fnName) { return key; } // não usada; mantida por clareza
+
+/* atualização dos valores calculados sem re-renderizar os inputs */
+function updateLive() {
+  const res = computeAll(S);
+  const D = res.D;
+  document.querySelectorAll("[data-out]").forEach(el => {
+    const txt = resolveOut(el.getAttribute("data-out"), D, S);
+    if (txt === null || txt === undefined) return;
+    if (el.tagName === "INPUT") { if (el.value !== txt) el.value = txt; }
+    else if (el.innerHTML !== txt) el.innerHTML = txt;
+  });
+  const bodyEl = document.getElementById("bio-info");
+  if (bodyEl) {
+    const last = D.bioComp.length ? D.bioComp[D.bioComp.length - 1] : null;
+    const info = last ? ("Linhas consideradas: " + D.bioComp.length + " · última pesagem: dia " + last.dias + " (" + fmt(last.peso, 0) + " g)") : "Preencha as pesagens acima — os indicadores aparecem automaticamente.";
+    if (bodyEl.textContent !== info) bodyEl.textContent = info;
+  }
+  const tb = document.getElementById("prec-cenarios");
+  if (tb) tb.innerHTML = precCenariosHTML(D);
+  updateSaveBadge();
+}
+
+/* ===================== REGISTROS PARA RENDER DINÂMICO ===================== */
+const TABS = [
+  { id: "geral", label: "① Dados gerais" },
+  { id: "levantamento", label: "② Levantamento" },
+  { id: "implantacao", label: "③ Custo de implantação" },
+  { id: "operacional", label: "④ Custos operacionais" },
+  { id: "indicadores", label: "⑤ Indicadores" },
+  { id: "precificacao", label: "⑥ Precificação" },
+  { id: "biometrias", label: "⑦ Biometrias" },
+  { id: "analises", label: "⑧ Análises de água" }
+];
+
+/* ===================== EVENTOS GLOBAIS ===================== */
+let inputDebounceId = null;
+document.addEventListener("input", function (ev) {
+  onFieldChange(ev);
+  const el = ev.target.closest("[data-live-refresh='1']");
+  if (el) {
+    clearTimeout(inputDebounceId);
+    inputDebounceId = setTimeout(rebuildActiveTab, 350);
+  }
+}, true);
+document.addEventListener("change", onFieldChange, true);
+function rebuildActiveTab() { render(); }
+document.addEventListener("click", function (ev) {
+  const btn = ev.target.closest("[data-action]");
+  if (!btn) return;
+  const action = btn.getAttribute("data-action");
+  if (action.indexOf("tab:") === 0) { switchTab(action.slice(4)); return; }
+  if (action === "print") { window.print(); return; }
+  if (action === "reset") { showConfirm("Limpar todos os dados digitados?", "Isso apaga os dados salvos neste aparelho/navegador e restaura o formulário em branco. Recomendamos salvar uma cópia antes.", "Sim, limpar", "Cancelar", function (ok) { if (ok) { try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} window.location.reload(); } }); return; }
+  if (action === "export") { exportJSON(); return; }
+  if (action === "import") { pickJSONFile(importJSONFile); return; }
+});
+let confirmHandler = null;
+function showConfirm(title, text, okLabel, cancelLabel, cb) {
+  const m = document.getElementById("modal");
+  document.getElementById("modal-title").textContent = title;
+  document.getElementById("modal-text").textContent = text;
+  const okB = document.getElementById("modal-ok");
+  okB.textContent = okLabel;
+  m.classList.add("show");
+  confirmHandler = function (ok) {
+    m.classList.remove("show");
+    confirmHandler = null;
+    cb(ok);
+  };
+}
+document.addEventListener("click", function (ev) {
+  if (ev.target.id === "modal-ok" && confirmHandler) { confirmHandler(true); return; }
+  if (ev.target.id === "modal-cancel" && confirmHandler) { confirmHandler(false); return; }
+  if (ev.target.id === "modal" && confirmHandler) { confirmHandler(false); }
+});
+/* modal: botão cancelar injetado */
+(function injectModalCancel() {
+  const card = document.querySelector(".modal-card");
+  if (!card) return;
+  const cancel = document.createElement("button");
+  cancel.className = "btn-reset"; cancel.id = "modal-cancel"; cancel.textContent = "Cancelar";
+  card.insertBefore(cancel, document.getElementById("modal-ok"));
+})();
+
+/* atalhos ao digitar Ctrl+S → salvar arquivo */
+document.addEventListener("keydown", function (ev) {
+  if ((ev.ctrlKey || ev.metaKey) && ev.key === "s") { ev.preventDefault(); exportJSON(); }
+});
+
+/* ===================== FIM DO RUNTIME — RENDERS DAS ABAS VÊM A SEGUIR ===================== */
+window.__appReady = true;
+/* ===================== RENDER PRINCIPAL + ABA GERAL ===================== */
+function topbarHTML() {
+  return '' +
+    '<header class="topbar">' +
+      '<div class="brand"><span class="logo">🐟</span><div>' +
+        '<div class="brand-title">Precificador de Piscicultura</div>' +
+        '<div class="brand-sub">Modelo Embrapa (Casaca &amp; Queiróz) — todos os cálculos conectados entre as etapas</div>' +
+      '</div></div>' +
+      '<div class="toolbar">' +
+        '<span class="save-badge" id="save-badge"></span>' +
+        '<button class="btn-reset" data-action="export" title="Baixar um arquivo JSON com seus dados">💾 Salvar arquivo</button>' +
+        '<button class="btn-reset" data-action="import" title="Carregar um arquivo JSON salvo anteriormente">📂 Carregar arquivo</button>' +
+        '<button class="btn-reset" data-action="print" title="Imprimir ou salvar em PDF">🖨️ Imprimir / PDF</button>' +
+        '<button class="btn-reset" data-action="reset" title="Limpar todos os dados">↺ Reiniciar</button>' +
+      '</div>' +
+    '</header>';
+}
+function tabsBarHTML() {
+  return '<nav class="tabs">' + TABS.map(t =>
+    '<button class="tab ' + (S.tab === t.id ? "active" : "") + '" data-action="tab:' + t.id + '">' + t.label + "</button>"
+  ).join("") + "</nav>";
+}
+function footerHTML() {
+  return '<footer class="foot">Créditos metodológicos: Jorge de Matos Casaca e Fernanda Queiróz e Silva (planilhas Embrapa de custo de produção de peixes). ' +
+    'Arquivo offline — seus dados ficam neste dispositivo, salvos automaticamente nesta página.</footer>';
+}
+function orientacoesHTML() {
+  return '<details class="orient"><summary>Orientações de uso (metodologia Embrapa)</summary><ul>' +
+    "<li>Preencha os dados nas etapas ①/② (e depois ⑦/⑧): as demais etapas apenas exibem os resultados das fórmulas.</li>" +
+    "<li>A planilha destina-se a <b>viveiros escavados</b>; calcule o custo <b>por cultivo e por viveiro</b>.</li>" +
+    "<li>Serve para monocultivo ou policultivo — mas a etapa ⑦ Biometrias avalia apenas a <b>espécie principal</b> (a primeira da lista).</li>" +
+    "<li>Atualize os valores de despesas e receitas para a <b>data da análise do custo de produção</b>, evitando o efeito da inflação no período.</li>" +
+    "<li>Depreciações de bens e equipamentos devem ser rateadas proporcionalmente ao uso no viveiro avaliado.</li>" +
+    "<li>Dica: use 💾 Salvar arquivo antes de grandes alterações; o backup fica em um arquivo JSON seu.</li>" +
+  "</ul></details>";
+}
+function render() {
+  const root = document.getElementById("root");
+  if (!root) return;
+  let html = topbarHTML() + tabsBarHTML() + '<main class="content">';
+  switch (S.tab) {
+    case "geral": html += tabGeralHTML(); break;
+    case "levantamento": html += tabLevantamentoHTML(); break;
+    case "implantacao": html += tabImplantacaoHTML(); break;
+    case "operacional": html += tabOperacionalHTML(); break;
+    case "indicadores": html += tabIndicadoresHTML(); break;
+    case "precificacao": html += tabPrecificacaoHTML(); break;
+    case "biometrias": html += tabBiometriasHTML(); break;
+    case "analises": html += tabAnalisesHTML(); break;
+    default: html += tabGeralHTML();
+  }
+  html += "</main>" + footerHTML();
+  root.innerHTML = html;
+  updateSaveBadge();
+}
+
+function tabGeralHTML() {
+  const D = computeAll(S).D;
+  return '' +
+    '<section class="fade">' +
+      '<h2>Dados gerais do cultivo</h2>' +
+      '<p class="hint">Informações básicas do empreendimento e do ciclo. Estas alimentam automaticamente todas as demais etapas.</p>' +
+      '<div class="grid2">' +
+        '<label>Nome do proprietário<br>' + inputTxt(S.cultivo.produtor, "cultivo.produtor") + '</label>' +
+        '<label>Localidade<br>' + inputTxt(S.cultivo.localidade, "cultivo.localidade") + '</label>' +
+        '<label>Município/Estado<br>' + inputTxt(S.cultivo.municipio, "cultivo.municipio") + '</label>' +
+        '<label>Número do viveiro<br>' + inputTxt(S.cultivo.numeroViveiro, "cultivo.numeroViveiro") + '</label>' +
+        '<label>Área do viveiro (ha)<br>' + inputNum(S.cultivo.areaViveiro, "cultivo.areaViveiro") + '</label>' +
+        '<label>Número do cultivo<br>' + inputTxt(S.cultivo.numeroCultivo, "cultivo.numeroCultivo") + '</label>' +
+        '<label>Data da estocagem<br>' + inputDate(S.cultivo.dataEstocagem, "cultivo.dataEstocagem") + '</label>' +
+        '<label>Data da despesca<br>' + inputDate(S.cultivo.dataDespesca, "cultivo.dataDespesca") + '</label>' +
+        '<label>Custo elaborado por<br>' + inputTxt(S.cultivo.elaborador, "cultivo.elaborador") + '</label>' +
+        '<div class="infobox">Período de cultivo calculado: <b>' + outSpan("periodo") + '</b></div>' +
+      '</div>' +
+      '<h3>Espécies produzidas</h3>' +
+      '<p class="hint">Lançamento por espécie — quantidade total produzida e preço médio unitário obtido na venda.</p>' +
+      '<table class="tbl"><thead><tr><th>Espécie</th><th>Peso médio final (g)</th><th>Quantidade (kg)</th><th>Preço unitário (R$/kg)</th></tr></thead><tbody>' +
+      S.especies.map((e, i) =>
+        '<tr><td>' + inputTxt(e.nome, "especies." + i + ".nome") + '</td>' +
+          '<td>' + inputNum(e.pesoMedioFinal, "especies." + i + ".pesoMedioFinal") + '</td>' +
+          '<td>' + inputNum(e.qtd, "especies." + i + ".qtd") + '</td>' +
+          '<td>' + inputNum(e.precoUnit, "especies." + i + ".precoUnit") + '</td></tr>'
+      ).join("") +
+      '</tbody></table>' +
+      '<div class="grid2">' +
+        '<label>Outras receitas (R$)<br>' + inputNum(S.outrasReceitas, "outrasReceitas") + '</label>' +
+        '<label>Cotação do dólar comercial (R$)<br>' + inputNum(S.dolar, "dolar") + '</label>' +
+      '</div>' +
+      '<div class="resumo-linha">' +
+        '<span>Produção total: <b>' + outSpan("producao-total") + '</b></span>' +
+        '<span>Receita bruta: <b>' + outSpan("receita-bruta") + '</b></span>' +
+        '<span>Preço médio de venda: <b>' + outSpan("preco-medio-venda") + '</b></span>' +
+      '</div>' +
+      orientacoesHTML() +
+    '</section>';
+}
+
+/* ===================== ABA LEVANTAMENTO ===================== */
+function tabLevantamentoHTML() {
+  const D = computeAll(S).D;
+  return '' +
+    '<section class="fade">' +
+      '<h2>Levantamento de dados</h2>' +
+      '<p class="hint">Insumos e serviços usados na formação do custo. Valores lançados aqui aparecem automaticamente nas etapas ③ e ④.</p>' +
+
+      '<h3>Construção do viveiro — máquinas (horas)</h3>' +
+      '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
+      S.maquinas.map((m, i) =>
+        '<tr><td>' + inputTxt(m.nome, "maquinas." + i + ".nome") + '</td>' +
+          '<td>' + esc(m.unidade) + '</td>' +
+          '<td>' + inputNum(m.qtd, "maquinas." + i + ".qtd") + '</td>' +
+          '<td>' + inputNum(m.preco, "maquinas." + i + ".preco") + '</td>' +
+          '<td class="calc">' + outSpan("vmaq/" + i) + '</td></tr>'
+      ).join("") +
+      '</tbody></table>' +
+      '<div class="subtotal">Subtotal máquinas: <b>' + outSpan("sub-maq") + '</b></div>' +
+
+      '<h3>Vida útil da construção</h3>' +
+      '<label>Anos de vida útil:<br>' + inputNum(S.vidaUtilConstrucao, "vidaUtilConstrucao") + '</label>' +
+      '<div class="info">Depreciação anual (construção) = subtotal ÷ vida útil × 0,9 → <b>' + outSpan("dep-constr") + '</b></div>' +
+
+      '<h3>Sistema de abastecimento e escoamento (materiais)</h3>' +
+      '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
+      S.materiais.map((m, i) =>
+        '<tr><td>' + inputTxt(m.nome, "materiais." + i + ".nome") + '</td>' +
+          '<td>' + esc(m.unidade) + '</td>' +
+          '<td>' + inputNum(m.qtd, "materiais." + i + ".qtd") + '</td>' +
+          '<td>' + inputNum(m.preco, "materiais." + i + ".preco") + '</td>' +
+          '<td class="calc">' + outSpan("vmat/" + i) + '</td></tr>'
+      ).join("") +
+        '<tr><td>Mão-de-obra na construção</td><td>R$</td>' +
+          '<td colspan="2">' + inputNum(S.maoDeObraConstrucao, "maoDeObraConstrucao") + '</td>' +
+          '<td class="calc">' + outSpan("v-moc") + '</td></tr>' +
+      '</tbody></table>' +
+      '<div class="subtotal">Subtotal sistema (com mão-de-obra): <b>' + outSpan("sub-mat") + '</b></div>' +
+      '<label>Manutenção na construção (R$/ano):<br>' + inputNum(S.manutencaoConstrucao, "manutencaoConstrucao") + '</label>' +
+
+      '<h3>Equipamentos (com vida útil individual)</h3>' +
+      '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Qtde</th><th>Preço un. (R$)</th><th>Vida útil (anos)</th><th>Valor (R$)</th><th>Deprec./ano (R$)</th></tr></thead><tbody>' +
+      S.equipamentos.map((e, i) =>
+        '<tr><td>' + inputTxt(e.nome, "equipamentos." + i + ".nome") + '</td>' +
+          '<td>' + esc(e.unidade) + '</td>' +
+          '<td>' + inputNum(e.qtd, "equipamentos." + i + ".qtd") + '</td>' +
+          '<td>' + inputNum(e.preco, "equipamentos." + i + ".preco") + '</td>' +
+          '<td>' + inputNum(e.vidaUtil, "equipamentos." + i + ".vidaUtil") + '</td>' +
+          '<td class="calc">' + outSpan("veq/" + i) + '</td>' +
+          '<td class="calc">' + outSpan("deq/" + i) + '</td></tr>'
+      ).join("") +
+      '</tbody></table>' +
+      '<div class="subtotal">Subtotal equipamentos: <b>' + outSpan("sub-eq") + '</b> · Depreciação anual: <b>' + outSpan("dep-eq") + '</b></div>' +
+      '<label>Manutenção de equipamentos (R$/ano):<br>' + inputNum(S.manutencaoEquipamentos, "manutencaoEquipamentos") + '</label>' +
+
+      '<h3>Parâmetros financeiros</h3>' +
+      '<div class="grid2">' +
+        '<label>Juros sobre capital mobilizado (% ao ano)<br>' + inputNum(S.percentuais.jurosCapital, "percentuais.jurosCapital") + '</label>' +
+        '<label>Terra (ha)<br>' + inputNum(S.quantitativos.terraHa, "quantitativos.terraHa") + '</label>' +
+        '<label>Valor da terra (R$/ha)<br>' + inputNum(S.quantitativos.precoTerra, "quantitativos.precoTerra") + '</label>' +
+        '<label>Juros sobre a terra (% ao ano)<br>' + inputNum(S.percentuais.jurosTerra, "percentuais.jurosTerra") + '</label>' +
+      '</div>' +
+
+      '<h3>Custos operacionais do cultivo</h3>' +
+      '<p class="hint">Insumos e despesas recorrentes do ciclo de engorda. Linhas calculadas automaticamente são marcadas no valor final.</p>' +
+      '<table class="tbl" id="op-tbl"><thead><tr><th>Item</th><th>Unidade</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
+        opRow("Alevinos", "Unidade", "quantitativos.alevinosQtd", "quantitativos.alevinosPrecoUnit", "out-alev") +
+        '<tr><td>Peso médio dos alevinos (g)</td><td>—</td><td colspan="2">' + inputNum(S.quantitativos.alevinosPesoMedio, "quantitativos.alevinosPesoMedio") + '</td><td class="calc">—</td></tr>' +
+        opRow("Mão de obra cultivo + encargos", "hora", "quantitativos.maoDeObraCultivoHoras", "quantitativos.maoDeObraCultivoValor", "out-mob") +
+        opRow("Ração 1", "kg", "quantitativos.racao1Qtd", "quantitativos.racao1Preco", "out-r1") +
+        opRow("Ração 2", "kg", "quantitativos.racao2Qtd", "quantitativos.racao2Preco", "out-r2") +
+        opRow("Fertilizante orgânico 1", "t", "quantitativos.fertOrg1Qtd", "quantitativos.fertOrg1Preco", "out-fo1") +
+        opRow("Fertilizante orgânico 2", "t", "quantitativos.fertOrg2Qtd", "quantitativos.fertOrg2Preco", "out-fo2") +
+        opRow("Fertilizante químico 1", "kg", "quantitativos.fertQuim1Qtd", "quantitativos.fertQuim1Preco", "out-fq1") +
+        opRow("Fertilizante químico 2", "kg", "quantitativos.fertQuim2Qtd", "quantitativos.fertQuim2Preco", "out-fq2") +
+        opRow("Calcário", "t", "quantitativos.calcarioQtd", "quantitativos.calcarioPreco", "out-calc") +
+        opRow("Cal virgem", "t", "quantitativos.calVirgemQtd", "quantitativos.calVirgemPreco", "out-calv") +
+        opRow("Combustível", "litro", "quantitativos.combustivelQtd", "quantitativos.combustivelPreco", "out-comb") +
+        opRow("Energia elétrica", "kWh", "quantitativos.energiaQtd", "quantitativos.energiaPreco", "out-ener") +
+        opRow("Análise da água", "Unidade", "quantitativos.analiseAguaQtd", "quantitativos.analiseAguaPreco", "out-anagua") +
+        opRow("Transporte", "km", "quantitativos.transporteQtd", "quantitativos.transportePreco", "out-transp") +
+        opRow("Assistência técnica", "Visita", "quantitativos.assistenciaQtd", "quantitativos.assistenciaPreco", "out-assist") +
+        opRowSimple("Gastos administrativos e financeiros", "quantitativos.gastosAdm", "out-gadm") +
+        opRowSimple("Medicamentos e produtos químicos", "quantitativos.medicamentos", "out-medic") +
+        opRowSimple("Outros custos operacionais", "quantitativos.outrosOperacionais", "out-outros") +
+        opRowSimple("Arrendamento", "quantitativos.arrendamento", "out-arrend") +
+        opRowSimple("Pró-labore (retirada)", "quantitativos.proLaboreSalario", "out-prolab") +
+      '</tbody></table>' +
+
+      '<h3>Auxiliares de cálculo (opcionais)</h3>' +
+      '<p class="hint">Estes campos alimentam apenas os cálculos automáticos de esterco e horas-máquina via movimentação de terra.</p>' +
+      '<div class="grid2">' +
+        '<label>Nº de animais para produção de esterco<br>' + inputNum(S.quantitativos.animais, "quantitativos.animais") + '</label>' +
+        '<label>Peso médio dos animais (kg)<br>' + inputNum(S.quantitativos.pesoAnimais, "quantitativos.pesoAnimais") + '</label>' +
+        '<label>Produção de esterco (% do peso vivo/dia)<br>' + inputNum(S.percentuais.producaoEstercoDia, "percentuais.producaoEstercoDia") + '</label>' +
+        '<label>Matéria seca do esterco (%)<br>' + inputNum(S.percentuais.materiaSecaEsterco, "percentuais.materiaSecaEsterco") + '</label>' +
+        '<label>Esterco produzido (t)<br>' + inputNum(S.quantitativos.estercoProduzido, "quantitativos.estercoProduzido") + '</label>' +
+        '<label>Horas/máquina informadas manualmente<br>' + inputNum(S.quantitativos.horasMaquinaManual, "quantitativos.horasMaquinaManual") + '</label>' +
+        '<label>Comprimento do aterro (m)<br>' + inputNum(S.quantitativos.comprimentoAterro, "quantitativos.comprimentoAterro") + '</label>' +
+        '<label>Altura do aterro (m)<br>' + inputNum(S.quantitativos.alturaAterro, "quantitativos.alturaAterro") + '</label>' +
+        '<label>Base maior do aterro (m)<br>' + inputNum(S.quantitativos.baseMaiorAterro, "quantitativos.baseMaiorAterro") + '</label>' +
+        '<label>Base menor do aterro (m)<br>' + inputNum(S.quantitativos.baseMenorAterro, "quantitativos.baseMenorAterro") + '</label>' +
+      '</div>' +
+      '<div class="info">Volume de aterro calculado: <b>' + outSpan("vol-aterro") + ' m³</b> · Horas-máquina estimadas (÷30): <b>' + outSpan("horas-maq") + '</b> · Esterco estimado: <b>' + outSpan("esterco-ton") + ' t</b></div>' +
+      '<p class="note">Observações metodológicas (Embrapa): uso indicado para viveiros escavados; calcular sempre o custo por cultivo e por viveiro; valores em R$ atualizados para a data da análise; ratear depreciações conforme o uso no viveiro avaliado.</p>' +
+    '</section>';
+}
+function opRow(label, unidade, pathQtd, pathPreco, outKey) {
+  return '<tr><td>' + esc(label) + '</td><td>' + esc(unidade) + '</td>' +
+    '<td>' + inputNum(S.quantitativos[pathQtd.split(".").pop()], pathQtd) + '</td>' +
+    '<td>' + inputNum(S.quantitativos[pathPreco.split(".").pop()], pathPreco) + '</td>' +
+    '<td class="calc">' + outSpan(outKey) + '</td></tr>';
+}
+function opRowSimple(label, pathValor, outKey) {
+  return '<tr><td>' + esc(label) + '</td><td>R$</td><td colspan="2">' + inputNum(S.quantitativos[pathValor.split(".").pop()], pathValor) + '</td>' +
+    '<td class="calc">' + outSpan(outKey) + '</td></tr>';
+}
+
+/* ===================== ABA IMPLANTAÇÃO / OPERACIONAL / INDICADORES ===================== */
+function tabImplantacaoHTML() {
+  const D = computeAll(S).D;
+  return '' +
+    '<section class="fade">' +
+      '<h2>Custo de implantação do viveiro</h2>' +
+      '<p class="hint">Preenchido automaticamente a partir do levantamento (etapa ②).</p>' +
+      '<table class="tbl"><thead><tr><th>Grupo</th><th>Valor (R$)</th><th>Depreciação anual (R$)</th></tr></thead><tbody>' +
+        '<tr><td>Construção do viveiro (máquinas)</td><td class="calc">' + fmtMoeda(D.totalMaquinas) + '</td><td class="calc">' + fmtMoeda(D.depConstrucao) + '</td></tr>' +
+        '<tr><td>Sistema de abastecimento/escoamento (materiais + M.O.)</td><td class="calc">' + fmtMoeda(D.totalMateriais) + '</td><td class="calc">' + fmtMoeda(D.depAbastecimento) + '</td></tr>' +
+        '<tr><td>Equipamentos</td><td class="calc">' + fmtMoeda(D.valorEquipamentos) + '</td><td class="calc">' + fmtMoeda(D.deprecEquip) + '</td></tr>' +
+        '<tr class="total"><td>Custo total do viveiro</td><td class="calc">' + fmtMoeda(D.custoTotalViveiro) + '</td><td class="calc">' + fmtMoeda(D.depreciacaoAnualTotal) + '</td></tr>' +
+      '</tbody></table>' +
+      '<div class="cards">' +
+        cardHTML("Custo de implantação do viveiro", fmtMoeda(D.custoTotalViveiro), null, "blue") +
+        cardHTML("Depreciação anual total", fmtMoeda(D.depreciacaoAnualTotal), "entra no COT", "orange") +
+      '</div>' +
+      '<p class="note">Observação metodológica: conforme a planilha original, a depreciação das máquinas e da infraestrutura considera 90% do valor residual; equipamentos depreciaram linearmente pela vida útil.</p>' +
+    '</section>';
+}
+function tabOperacionalHTML() {
+  const D = computeAll(S).D;
+  return '' +
+    '<section class="fade">' +
+      '<h2>Custos operacionais — COE, COT e CT</h2>' +
+      '<p class="hint">Os valores abaixo chegam automaticamente do levantamento. Alterações nos insumos refletem aqui ao navegar entre as etapas.</p>' +
+      '<h3>Custo Operacional Efetivo (COE)</h3>' +
+      '<table class="tbl"><thead><tr><th>Item</th><th>Valor (R$)</th><th>% do COE</th></tr></thead><tbody id="coe-tbody">' +
+        coeRowsHTML(D) +
+      '</tbody></table>' +
+      '<h3>Custo Operacional Total (COT)</h3>' +
+      '<table class="tbl"><thead><tr><th>Componente</th><th>Valor (R$)</th></tr></thead><tbody>' +
+        '<tr><td>COE Total</td><td class="calc">' + fmtMoeda(D.coeTotal) + '</td></tr>' +
+        '<tr><td>Pró-labore</td><td class="calc">' + fmtMoeda(defValue(S.quantitativos.proLaboreSalario)) + '</td></tr>' +
+        '<tr><td>Depreciação anual</td><td class="calc">' + fmtMoeda(D.depreciacaoAnualTotal) + '</td></tr>' +
+        '<tr class="total"><td>COT Total</td><td class="calc">' + fmtMoeda(D.cotTotal) + '</td></tr>' +
+      '</tbody></table>' +
+      '<h3>Custo de oportunidade e Custo Total</h3>' +
+      '<table class="tbl"><thead><tr><th>Componente</th><th>Valor (R$)</th></tr></thead><tbody>' +
+        '<tr><td>Juros sobre capital mobilizado</td><td class="calc">' + fmtMoeda(D.jurosCapital) + '</td></tr>' +
+        '<tr><td>Juros sobre a terra</td><td class="calc">' + fmtMoeda(D.jurosTerra) + '</td></tr>' +
+        '<tr><td>Custo de oportunidade</td><td class="calc">' + fmtMoeda(D.custoOportunidade) + '</td></tr>' +
+        '<tr class="total"><td>Custo Total (CT) = COT + Custo de Oportunidade</td><td class="calc">' + fmtMoeda(D.custoTotal) + '</td></tr>' +
+      '</tbody></table>' +
+      '<div class="cards">' +
+        cardHTML("COE total", fmtMoeda(D.coeTotal), fmtMoeda(D.ind.coeKg) + "/kg", "blue") +
+        cardHTML("COT total", fmtMoeda(D.cotTotal), fmtMoeda(D.ind.cotKg) + "/kg", "purple") +
+        cardHTML("Custo Total (CT)", fmtMoeda(D.custoTotal), fmtMoeda(D.ind.ctKg) + "/kg", "red") +
+      '</div>' +
+    '</section>';
+}
+function coeRowsHTML(D) {
+  return D.coeItens.map(c =>
+    '<tr><td>' + esc(c.nome) + '</td>' +
+      '<td class="calc">' + fmtMoeda(c.valor) + '</td>' +
+      '<td class="calc">' + (D.coTotal > 0 ? fmt((c.valor * 100) / D.coTotal, 1) + "%" : "—") + '</td></tr>'
+  ).join("") +
+    '<tr class="total"><td>COE Total</td><td class="calc">' + fmtMoeda(D.coTotal) + '</td><td class="calc">100%</td></tr>';
+}
+function tabIndicadoresHTML() {
+  const D = computeAll(S).D;
+  const ind = D.ind;
+  const dolar = D.dolar || 0;
+  function cell(row) {
+    const un = row[1];
+    let v;
+    if (un === "%") v = fmt(row[2], 1) + " %";
+    else if (un.indexOf("R$") !== -1) v = fmtMoeda(row[2]);
+    else v = fmt(row[2], 2);
+    return v;
+  }
+  const rows = [
+    ["Receita Bruta (RB)", "R$", ind.rb],
+    ["Receita Bruta (RB)/kg", "R$/kg", ind.rbKg],
+    ["Custo Operacional Efetivo (COE)", "R$", ind.coe],
+    ["COE/kg", "R$/kg", ind.coeKg],
+    ["Custo Operacional Total (COT)", "R$", ind.cot],
+    ["COT/kg", "R$/kg", ind.cotKg],
+    ["Custo Total (CT)", "R$", ind.ct],
+    ["CT/kg", "R$/kg", ind.ctKg],
+    ["Margem Bruta (MB)", "R$", ind.rb - ind.coe],
+    ["Margem Bruta Unitária (MBU)", "R$/kg", ind.mbu],
+    ["Margem Bruta (%)", "%", ind.mb],
+    ["Margem Líquida (ML)", "R$", ind.rb - ind.cot],
+    ["Margem Líquida Unitária (MLU)", "R$/kg", ind.mlu],
+    ["Margem Líquida / Índice de Lucratividade", "%", ind.ml],
+    ["Produção de Nivelamento (COE)", "kg", ind.nivelamentoCOE],
+    ["Produção de Nivelamento (COT)", "kg", ind.nivelamentoCOT],
+    ["Preço de Nivelamento (COE)", "R$/kg", ind.prelonCOE],
+    ["Preço de Nivelamento (COT)", "R$/kg", ind.prelonCOT],
+    ["Ponto de Equilíbrio Operacional", "kg", ind.pontoEquilibrioOp],
+    ["Custo da ração/kg produzido", "R$/kg", ind.custoRacaoKg],
+    ["Custo do fertilizante/kg produzido", "R$/kg", ind.custoFertKg],
+    ["Custo da mão de obra/kg produzido", "R$/kg", ind.custoMaoObraKg],
+    ["Período de Recuperação do Capital", "ciclos", ind.recuperacaoCapital],
+    ["Custo de implantação do viveiro", "R$", ind.custoImplantacao]
+  ];
+  return '' +
+    '<section class="fade">' +
+      '<h2>Indicadores técnicos e econômicos</h2>' +
+      '<p class="hint">Síntese do desempenho do cultivo — calculada em tempo real a partir de todas as etapas anteriores.</p>' +
+      '<div class="cards">' +
+        cardHTML("Receita Bruta", fmtMoeda(ind.rb), fmtMoeda(ind.rbKg) + "/kg", "green") +
+        cardHTML("Margem Bruta Unitária", fmtMoeda(ind.mbu), "MB " + fmt(ind.mb, 1) + "%", "blue") +
+        cardHTML("Margem Líquida Unitária", fmtMoeda(ind.mlu), "ML " + fmt(ind.ml, 1) + "%", "purple") +
+        cardHTML("Produtividade", fmt(ind.produtividade, 0) + " kg/ha/ano", null, "orange") +
+        cardHTML("Conversão alimentar", fmt(ind.conversaoAlimentar, 2) + " kg ração/kg", null, "orange") +
+        cardHTML("Sobrevivência", fmt(ind.sobrevivencia, 1) + "%", null, "orange") +
+        cardHTML("Taxa de crescimento", fmt(ind.taxaCrescimento, 1) + " g/dia", null, "orange") +
+        cardHTML("Preço de nivelamento (COT)", fmtMoeda(ind.prelonCOT), "preço mínimo p/ cobrir COT", "red") +
+      '</div>' +
+      '<h3>Tabela completa</h3>' +
+      '<p class="note">Valores em US$ convertidos pela cotação informada na etapa ① (Dados gerais).</p>' +
+      '<table class="tbl"><thead><tr><th>Indicador</th><th>Unidade</th><th>Resultado</th>' + (dolar > 0 ? '<th>US$</th>' : '') + '</tr></thead><tbody>' +
+      rows.map(row =>
+        '<tr><td>' + esc(row[0]) + '</td><td>' + esc(row[1]) + '</td><td class="calc">' + cell(row) + '</td>' +
+          (dolar > 0 ? '<td class="calc">' + (row[1].indexOf("R$") !== -1 && typeof row[2] === "number" ? "US$ " + fmt(row[2] / dolar, 2) : "—") + '</td>' : '') +
+        '</tr>'
+      ).join("") +
+      '</tbody></table>' +
+    '</section>';
+}
+
+/* ===================== ABA PRECIFICAÇÃO / BIOMETRIAS / ANÁLISES ===================== */
+function tabPrecificacaoHTML() {
+  const D = computeAll(S).D;
+  return '' +
+    '<section class="fade">' +
+      '<h2>Precificação do produto</h2>' +
+      '<p class="hint">Aplicação direta sobre os indicadores: use o custo como base e aplique sua margem desejada.</p>' +
+      '<div class="grid2">' +
+        '<label>Base de cálculo' + selectHTML(S.markupModalidade, "markupModalidade", [
+          { v: "cot", l: "Custo Operacional Total (COT)/kg" },
+          { v: "ct", l: "Custo Total (CT)/kg" }
+        ]) + '</label>' +
+        '<label>Markup desejado (%)<br>' + inputNum(S.margemMarkup, "margemMarkup") + '</label>' +
+      '</div>' +
+      '<div class="cards">' +
+        cardHTML("Custo base (" + S.markupModalidade.toUpperCase() + ")", fmtMoeda(D.ind[S.markupModalidade === "cot" ? "cotKg" : "ctKg"]), "por kg", "blue") +
+        cardHTML("Preço sugerido", fmtMoeda(precoSugerido(D)), "markup de " + fmt(D.margemMarkup, 0) + "%", "green") +
+        cardHTML("Lucro unitário", fmtMoeda(lucroUnico(D)), "por kg", "purple") +
+      '</div>' +
+      '<table class="tbl"><thead><tr><th>Cenário de markup</th><th>Preço (R$/kg)</th><th>Lucro líquido estimado</th></tr></thead>' +
+        '<tbody id="prec-cenarios">' + precCenariosHTML(D) + '</tbody></table>' +
+      '<p class="note">O lucro líquido estimado considera preço − custo base (COE/COT/CT escolhido). Margens são referências gerenciais: valide sempre com o mercado local.</p>' +
+    '</section>';
+}
+function precoSugerido(D) {
+  const base = D.ind[D.markupModalidade === "cot" ? "cotKg" : "ctKg"];
+  return base > 0 ? base * (1 + D.margemMarkup / 100) : 0;
+}
+function lucroUnico(D) {
+  const base = D.ind[D.markupModalidade === "cot" ? "cotKg" : "ctKg"];
+  const pr = precoSugerido(D);
+  return pr > base ? pr - base : 0;
+}
+function precCenariosHTML(D) {
+  const base = D.ind[D.markupModalidade === "cot" ? "cotKg" : "ctKg"];
+  return [10, 20, 30, 40, 50, 60, 80, 100].map(mk => {
+    const pr = base * (1 + mk / 100);
+    const lu = pr - (D.ind.ctKg || 0);
+    return '<tr' + (mk === Math.round(D.margemMarkup) ? ' class="hl"' : '') + '>' +
+      '<td>' + mk + '%</td>' +
+      '<td class="calc">' + fmtMoeda(pr) + '</td>' +
+      '<td class="calc">' + fmtMoeda(lu) + ' (' + (base > 0 ? fmt((lu / pr) * 100, 1) : "—") + '%)</td></tr>';
+  }).join("");
+}
+function tabBiometriasHTML() {
+  return '' +
+    '<section class="fade">' +
+      '<h2>Biometrias — acompanhamento do cultivo</h2>' +
+      '<p class="hint">Registre pesagens periódicas. O ganho de peso diário, PEC e produtividade são calculados automaticamente.</p>' +
+      '<table class="tbl"><thead><tr><th>#</th><th>Data</th><th>Peso médio (g)</th><th>Dias de cultivo</th><th>Ganho (g/dia)</th><th>Produção kg/viveiro/dia</th><th>PEC (kg/viveiro)</th><th>Produtividade (kg/ha/ano)</th></tr></thead><tbody>' +
+      S.biometrias.map((b, i) =>
+        '<tr><td>' + (i + 1) + '</td>' +
+          '<td>' + inputDate(b.data, "biometrias." + i + ".data") + '</td>' +
+          '<td>' + inputNum(b.pesoMedio, "biometrias." + i + ".pesoMedio") + '</td>' +
+          '<td class="calc">' + outSpan("bio" + (i + 1) + "-dias") + '</td>' +
+          '<td class="calc">' + outSpan("bio" + (i + 1) + "-ganho") + '</td>' +
+          '<td class="calc">' + outSpan("bio" + (i + 1) + "-vkd") + '</td>' +
+          '<td class="calc">' + outSpan("bio" + (i + 1) + "-pec") + '</td>' +
+          '<td class="calc">' + outSpan("bio" + (i + 1) + "-prod") + '</td></tr>'
+      ).join("") +
+      '</tbody></table>' +
+      '<div class="info" id="bio-info">Preencha as pesagens acima — os indicadores aparecem automaticamente.</div>' +
+      '<p class="note">Obs.: inclua uma linha com a data da estocagem e o peso dos alevinos para servir de referência às taxas de crescimento. Conforme a metodologia, esta etapa avalia a espécie principal (primeira da lista lançada).</p>' +
+    '</section>';
+}
+function tabAnalisesHTML() {
+  return '' +
+    '<section class="fade">' +
+      '<h2>Análises físico-químicas e microbiológicas</h2>' +
+      '<p class="hint">Parâmetros de qualidade da água do viveiro, seguindo a Planilha 6 da metodologia Embrapa. Informe a data e o resultado de cada análise.</p>' +
+      '<table class="tbl"><thead><tr><th>Parâmetro</th><th>Data</th><th>Resultado</th></tr></thead><tbody>' +
+      S.analises.map((a, i) =>
+        '<tr><td>' + esc(a.parametro) + '</td>' +
+          '<td>' + inputDate(a.data, "analises." + i + ".data") + '</td>' +
+          '<td>' + inputTxt(a.resultado, "analises." + i + ".resultado") + '</td></tr>'
+      ).join("") +
+      '</tbody></table>' +
+      '<p class="note">Esta etapa registra os laudos das análises de água. Eles documentam as condições do cultivo junto ao custo de produção.</p>' +
+    '</section>';
+}
+
+/* ===================== RESOLVER DE SAÍDAS DINÂMICAS ===================== */
+function resolveOut(key, D, S) {
+  switch (key) {
+    case "periodo": return fmt(D.periodoCultivo, 0) + " dias";
+    case "producao-total": return fmt(D.producaoTotalKg, 0) + " kg";
+    case "receita-bruta": return fmtMoeda(D.receitaBruta);
+    case "preco-medio-venda": return fmtMoeda(D.precoMedioVenda) + "/kg";
+    case "sub-maq": return fmtMoeda(D.totalMaquinas);
+    case "sub-mat": return fmtMoeda(D.totalMateriais);
+    case "sub-eq": return fmtMoeda(D.valorEquipamentos);
+    case "dep-constr": return fmtMoeda(D.depConstrucao);
+    case "dep-eq": return fmtMoeda(D.deprecEquip);
+    case "v-moc": return fmtMoeda(defValue(S.maoDeObraConstrucao));
+    case "vol-aterro": return fmt(D.volumeAterro, 1);
+    case "horas-maq": return fmt(D.horasMaquinaTotal, 0);
+    case "esterco-ton": return fmt(D.estercoTon, 2);
+    case "out-alev": return fmtMoeda(D.coeItens[0].valor);
+    case "out-mob": return fmtMoeda(D.coeItens[1].valor);
+    case "out-r1": return fmtMoeda(defValue(S.quantitativos.racao1Qtd) * defValue(S.quantitativos.racao1Preco));
+    case "out-r2": return fmtMoeda(defValue(S.quantitativos.racao2Qtd) * defValue(S.quantitativos.racao2Preco));
+    case "out-fo1": return fmtMoeda(defValue(S.quantitativos.fertOrg1Qtd) * defValue(S.quantitativos.fertOrg1Preco));
+    case "out-fo2": return fmtMoeda(defValue(S.quantitativos.fertOrg2Qtd) * defValue(S.quantitativos.fertOrg2Preco));
+    case "out-fq1": return fmtMoeda(defValue(S.quantitativos.fertQuim1Qtd) * defValue(S.quantitativos.fertQuim1Preco));
+    case "out-fq2": return fmtMoeda(defValue(S.quantitativos.fertQuim2Qtd) * defValue(S.quantitativos.fertQuim2Preco));
+    case "out-calc": return fmtMoeda(defValue(S.quantitativos.calcarioQtd) * defValue(S.quantitativos.calcarioPreco));
+    case "out-calv": return fmtMoeda(defValue(S.quantitativos.calVirgemQtd) * defValue(S.quantitativos.calVirgemPreco));
+    case "out-comb": return fmtMoeda(defValue(S.quantitativos.combustivelQtd) * defValue(S.quantitativos.combustivelPreco));
+    case "out-ener": return fmtMoeda(defValue(S.quantitativos.energiaQtd) * defValue(S.quantitativos.energiaPreco));
+    case "out-anagua": return fmtMoeda(defValue(S.quantitativos.analiseAguaQtd) * defValue(S.quantitativos.analiseAguaPreco));
+    case "out-transp": return fmtMoeda(defValue(S.quantitativos.transporteQtd) * defValue(S.quantitativos.transportePreco));
+    case "out-assist": return fmtMoeda(defValue(S.quantitativos.assistenciaQtd) * defValue(S.quantitativos.assistenciaPreco));
+    case "out-gadm": return fmtMoeda(defValue(S.quantitativos.gastosAdm));
+    case "out-medic": return fmtMoeda(defValue(S.quantitativos.medicamentos));
+    case "out-outros": return fmtMoeda(defValue(S.quantitativos.outrosOperacionais));
+    case "out-arrend": return fmtMoeda(defValue(S.quantitativos.arrendamento));
+    case "out-prolab": return fmtMoeda(defValue(S.quantitativos.proLaboreSalario));
+    case "prec-base": {
+      const base = D.ind[D.markupModalidade === "cot" ? "cotKg" : "ctKg"];
+      return fmtMoeda(base);
+    }
+    case "prec-sugerido": return fmtMoeda(precoSugerido(D));
+    case "prec-lucro": return fmtMoeda(lucroUnico(D));
+  }
+  if (key.indexOf("vmaq/") === 0) { const m = S.maquinas[+key.slice(5)]; return m ? fmtMoeda(defValue(m.qtd) * defValue(m.preco)) : "—"; }
+  if (key.indexOf("vmat/") === 0) { const m = S.materiais[+key.slice(5)]; return m ? fmtMoeda(defValue(m.qtd) * defValue(m.preco)) : "—"; }
+  if (key.indexOf("veq/") === 0) { const e = S.equipamentos[+key.slice(4)]; return e ? fmtMoeda(defValue(e.qtd) * defValue(e.preco)) : "—"; }
+  if (key.indexOf("deq/") === 0) {
+    const e = S.equipamentos[+key.slice(4)];
+    if (!e) return "—";
+    return defValue(e.vidaUtil) > 0 ? fmtMoeda((defValue(e.qtd) * defValue(e.preco)) / defValue(e.vidaUtil)) : "—";
+  }
+  if (key.indexOf("bio") === 0 && key.indexOf("-dias") !== -1) { const b = findBio(D, key); return b ? fmt(b.dias, 0) : "—"; }
+  if (key.indexOf("bio") === 0 && key.indexOf("-ganho") !== -1) { const b = findBio(D, key); return b ? fmt(b.ganhoDia, 1) : "—"; }
+  if (key.indexOf("bio") === 0 && key.indexOf("-vkd") !== -1) { const b = findBio(D, key); return b ? fmt(b.viveiroKgDia, 2) : "—"; }
+  if (key.indexOf("bio") === 0 && key.indexOf("-pec") !== -1) { const b = findBio(D, key); return b ? fmt(b.pec, 2) : "—"; }
+  if (key.indexOf("bio") === 0 && key.indexOf("-prod") !== -1) { const b = findBio(D, key); return b ? fmt(b.produtividade, 0) : "—"; }
+  return null;
+}
+function findBio(D, key) {
+  const n = parseInt(key.replace(/[^\d]/g, ""), 10);
+  for (let i = 0; i < D.bioComp.length; i++) { if (D.bioComp[i].idx === n) return D.bioComp[i]; }
+  return null;
+}
+
+/* ===================== INICIALIZAÇÃO ===================== */
+function boot() {
+  const saved = loadState();
+  S = saved ? deepMerge(defaultState(), saved) : defaultState();
+  if (!S.analises || !S.analises.length) S.analises = parametrosPadraoToAnalises();
+  initAnaliseDates();
+  saveStatus = saved ? "Sessão restaurada do armazenamento interno" : "";
+  render();
+  if (saved) showToast("Dados restaurados deste navegador.");
+}
+boot();
+</script>
+</body>
+</html>
