@@ -1,3 +1,225 @@
+
+Gemini
+
+Nova conversa
+Biblioteca
+Imagens
+Programado
+Personalizar
+
+Vídeos
+Novo notebook
+Publicando Código no GitHub Pages
+Preparativo para Explicação
+Show do Palmeiras Já Ocorreu
+Principais Empresários de Jogadores Brasileiros
+Preço do Camarão Pitú no Brasil
+Como Fazer um Sifão para Drenagem
+Custo de Viagem para Colares
+Ícones da Música Paraense
+Cálculo do Diâmetro da Circunferência
+Aguardando a Chegada do Táxi
+Como Calcular a Altura de uma Árvore
+Saudação e Oferta de Ajuda
+Planos e Avisos de Mudança
+Planejamento de Povoamento de Piscicultura
+Pilar: Alinhamento e Desempenho Estrutural
+Formatação de Sumário ABNT
+Dimensionamento de Lona para Tanque Circular
+Lona para Tanque de Piscicultura
+Contato Adiado Para Amanhã
+Cálculo de Diâmetro e Volume de Tanque
+Divulgação de Ilustrações: Guia Prático
+Oferecendo Apoio Emocional
+Estilos de Fontes para "Já Pensaste?"
+Embaixador e Três Poderes
+Técnico em Planejamento da EMATER: Funções
+Conversa com o Gemini
+preciso corrigir esse codigo para rodar nogit hub
+
+Para fazer o seu código rodar no GitHub Pages (que serve sites estáticos em HTML, CSS e JavaScript direto no navegador), a principal alteração necessária é garantir que o arquivo principal se chame exatamente index.html na raiz do seu repositório. Como o seu arquivo já está estruturado em um arquivo único (HTML + CSS + JS embutidos), ele é perfeito para o GitHub Pages.
+
+Vou gerar agora a versão corrigida e otimizada do arquivo pronta para você subir no seu repositório.
+
+I will now generate the complete, single-file HTML application ready to be saved as index.html and deployed on GitHub Pages.
+
+Precificador de Piscicultura Offline
+Precificador de Piscicultura — versão offline
+
+Edite diretamente ou com o Gemini
+ Clique onde quiser para digitar e editar o texto, ou selecione uma parte dele e peça ao Gemini para fazer modificações. 
+Como publicar no GitHub Pages:
+Crie um repositório novo no GitHub (pode ser público).
+
+Salve o código acima no seu computador com o exato nome index.html.
+
+Envie (faça o upload ou o git push) desse arquivo index.html para a raiz do repositório no GitHub.
+
+No seu repositório no GitHub, vá em Settings (Configurações) > Pages.
+
+Em Build and deployment, na opção Branch, selecione main (ou master) e / (root), depois clique em Save.
+
+Em alguns instantes, o GitHub gerará o link oficial do seu site onde o precificador funcionará perfeitamente online.
+
+index.html.md ele ta assim
+
+Your HTML file is ready
+
+Ícone do app HTML
+index
+ HTML 
+Para corrigir o problema e fazer o projeto rodar perfeitamente no GitHub Pages (ou em qualquer hospedagem web estática), a principal mudança é remover a extensão .md do nome do arquivo, mantendo apenas index.html.   
+precificador-piscicultura-offline.html
+
+Por que a extensão .md causa problemas?
+.md indica um arquivo Markdown (usado para documentação, README, etc.). Quando o GitHub Pages encontra um arquivo .md, ele o renderiza como texto simples em vez de executar o código HTML, CSS e JavaScript da aplicação.
+
+O nome index.html em letras minúsculas é o padrão reconhecido automaticamente pelos servidores web para carregar a página inicial.
+
+Como renomear no repositório GitHub:
+No seu repositório no GitHub, abra o arquivo index.html.md.
+
+Clique no ícone de lápis ✏️ (Edit this file).
+
+Na caixa onde fica o nome do arquivo no topo da tela, apague o .md, deixando apenas index.html.
+
+Vá até o final da página e clique em Commit changes....
+
+Verificação do GitHub Pages:
+Vá em Settings > Pages no seu repositório.
+
+Certifique-se de que a opção Source está em Deploy from a branch.
+
+Em Branch, selecione main (ou master) e a pasta / (root).
+
+Clique em Save. O link do seu site estará disponível em instantes!
+
+consegui fazer isso
+
+Que excelente notícia! Fico muito feliz que tenha conseguido resolver e ajustar o código para rodar no GitHub Pages.   
+precificador-piscicultura-offline.html
+
+Se precisar de ajuda com mais alguma melhoria, nova funcionalidade para o seu precificador ou qualquer outro ajuste, é só avisar!
+
+preciso sim.
+
+Quer explorar mais melhorias para o precificador?
+
+Sim
+isso.
+
+Que legal! Com o seu precificador já rodando bonitinho no GitHub Pages, quais funcionalidades ou melhorias você gostaria de implementar agora para facilitar ainda mais o seu controle na piscicultura?   
+precificador-piscicultura-offline.html
+
+Aqui estão algumas ideias comuns que você pode querer adicionar:
+
+primeiro ponto: percebi que que estão faltando dados referentes a tanque de geomembrana, selador de tanque, e grade para tanque de geomembrana, além de aerador tipo turbina.
+
+Com certeza! Para tornar o seu precificador de piscicultura ainda mais completo e adaptado a diferentes sistemas produtivos (já que a versão original da Embrapa foca bastante em viveiros escavados), vale a pena incluir esses itens de infraestrutura em geomembrana e o aerador tipo turbina, que são muito comuns em cultivos intensivos e em tanques suspensos ou escavados revestidos.
+
+Como o seu código está estruturado em um arquivo único em HTML/JavaScript, você pode atualizar as listas padrão de materiais, equipamentos e itens operacionais diretamente no objeto defaultState() do script.
+
+Aqui está o guia prático de onde e como adicionar esses novos itens no código do seu index.html:
+
+1. Adicionar o Aerador Tipo Turbina nos Equipamentos
+Na lista de equipamentos (dentro da função defaultState), você pode adicionar o aerador tipo turbina para que ele calcule o valor total e a depreciação anual com base na vida útil.
+
+Procure por este trecho no seu código:
+
+JavaScript
+    equipamentos: [
+      { id: 1, nome: "Rede", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 2, nome: "Tarrafa", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 3, nome: "Tanque-rede", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 4, nome: "Aerador", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+E você pode adicionar o aerador tipo turbina logo abaixo (ou renomear/complementar o aerador genérico):
+
+JavaScript
+      { id: 4, nome: "Aerador tipo roda de pás / turbina", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 5 },
+2. Adicionar Geomembrana, Selador e Grades nos Materiais
+Na lista de materiais (utilizada para o custo de implantação/abastecimento e infraestrutura), você pode incluir os itens voltados para tanques de geomembrana:
+
+Procure por este trecho no código:
+
+JavaScript
+    materiais: [
+      { id: 1, nome: "Tubos concreto", unidade: "Unidade", qtd: 0, preco: 0 },
+      { id: 2, nome: "Tubos PVC", unidade: "m", qtd: 0, preco: 0 },
+      { id: 3, nome: "Joelho PVC", unidade: "Unidade", qtd: 0, preco: 0 },
+E você pode adicionar novos itens logo abaixo:
+
+JavaScript
+      { id: 11, nome: "Geomembrana PEAD (m²)", unidade: "m²", qtd: 0, preco: 0 },
+      { id: 12, nome: "Selador / Adesivo para geomembrana", unidade: "Unidade", qtd: 0, preco: 0 },
+      { id: 13, nome: "Grade de proteção /anti-fuga", unidade: "Unidade", qtd: 0, preco: 0 },
+(Nota: Como o array de materiais no seu código faz um .map() dinâmico na tabela de implantação, adicionar novos itens aí faz com que eles apareçam automaticamente na Etapa ② - Levantamento e entrem no cálculo de implantação).
+
+Como fazer isso de forma prática no seu arquivo:
+Abra o seu arquivo index.html em um editor de texto (como VS Code ou Bloco de Notas).
+
+Pressione Ctrl + F e busque por equipamentos: e materiais:.
+
+Insira as linhas com os novos itens respeitando a mesma estrutura de chaves (id, nome, unidade, qtd, preco, etc.).
+
+Salve o arquivo e atualize a página no navegador.
+
+segundo ponto: o pdf tem gerar de todas as planilhas, incluisve a de agua.
+
+Seu arquivo index.html foi atualizado com as duas melhorias que você pediu!
+
+Ícone do app HTML
+index
+ HTML 
+O que foi adicionado e corrigido neste arquivo:
+Inclusão dos novos itens de infraestrutura e oxigenação (Geomembrana e Aerador Turbina):
+
+Materiais de Implantação / Infraestrutura:
+
+Tanque Geomembrana (PEAD) (em 
+m 
+2
+ )
+
+Selador / Solda para geomembrana
+
+Grade de proteção / anti-fuga para tanque
+
+Tubos e conexões de PVC (para encanamento/drenagem por siphões ou drenos)
+
+Equipamentos:
+
+Aerador tipo turbina (com cálculo automático de depreciação anual por tempo de vida útil)
+
+Aerador de pás
+
+Motobomba / Bomba d'água
+
+Comedouros automáticos
+
+Impressão e Geração de PDF do Relatório Completo (Todas as 8 Planilhas/Etapas):
+
+Antes, ao clicar no botão de impressão, o navegador imprimia apenas a aba que estava aberta na tela.
+
+Agora, ao clicar no botão 🖨️ Relatório Completo PDF, o sistema renderiza automaticamente todas as 8 planilhas/etapas em sequência (Dados Gerais, Levantamento, Implantação, Custos Operacionais, Indicadores, Precificação, Biometrias e Análises de Água), separando cada uma com quebras de página limpas antes de abrir a janela do navegador para salvar em PDF.
+
+Como atualizar no seu GitHub:
+Abra o arquivo index.html do link acima ou copie o código atualizado.
+
+No seu repositório no GitHub, abra o arquivo index.html, clique em Edit file (ícone de lápis) e substitua o conteúdo pelo código atualizado.
+
+Clique em Commit changes.... Em poucos segundos o seu site no GitHub Pages estará atualizado com os novos itens e o relatório PDF completo!
+
+
+
+
+
+
+O Gemini é uma IA e pode cometer erros.
+
+Convert chat to PDF
+Convert chat to PDF
+Open this chat in Acrobat
+Analyzing
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -61,15 +283,32 @@ details.orient ul{margin:8px 0 0;padding-left:18px;font-size:.82rem;color:var(--
 .modal-card h4{margin:0 0 10px;font-size:1rem}
 .modal-card p{font-size:.86rem;color:var(--ink2);margin:0 0 16px}
 .modal-card button{margin-right:8px}
-@media print{*{background:#fff!important;color:#111!important}.tabs,.toolbar{display:none!important}.app-root{padding:0}.content{max-width:none;padding:0 10mm}.tbl{display:table;width:100%;border-collapse:collapse}.tbl th,.tbl td{border:1px solid #888;padding:3px 5px;font-size:9pt}.tbl tr:hover{background:transparent}input.inp,select.inp{border-color:transparent;background:transparent;padding:0 2px;font-size:9pt}.grid2{grid-template-columns:repeat(3,1fr)}label{font-size:8pt;color:#333}.cards{display:flex;flex-wrap:wrap;gap:6px}.card-ind{border:1px solid #bbb;background:#f7f7f7;padding:6px;margin-bottom:6px;box-shadow:none;page-break-inside:avoid}.card-ind .val{font-size:11pt}.note,.hint,.info{font-size:8pt}.foot{border-top:1px solid #aaa;font-size:8pt}}
+
+/* Estilos de Impressão / PDF Geral */
+@media print{
+  *{background:#fff!important;color:#111!important}
+  .tabs,.toolbar{display:none!important}
+  .app-root{padding:0}
+  .content{max-width:none;padding:0 5mm}
+  .print-page-break{page-break-before:always;margin-top:20px;padding-top:15px;border-top:2px solid #ccc}
+  .tbl{display:table;width:100%;border-collapse:collapse;margin:10px 0}
+  .tbl th,.tbl td{border:1px solid #888;padding:4px 6px;font-size:8.5pt}
+  .tbl tr:hover{background:transparent}
+  input.inp,select.inp{border:none!important;background:transparent!important;padding:0 2px!important;font-size:8.5pt!important;appearance:none;-webkit-appearance:none}
+  .grid2{grid-template-columns:repeat(3,1fr)}
+  label{font-size:8pt;color:#333}
+  .cards{display:flex;flex-wrap:wrap;gap:6px}
+  .card-ind{border:1px solid #bbb;background:#f7f7f7;padding:6px;margin-bottom:6px;box-shadow:none;page-break-inside:avoid}
+  .card-ind .val{font-size:10pt}
+  .note,.hint,.info{font-size:8pt}
+  .foot{border-top:1px solid #aaa;font-size:8pt}
+}
 @media (max-width:640px){.tbl{display:block;overflow-x:auto;white-space:nowrap}.brand-sub{display:none}.content{padding:16px 12px}.topbar{padding:12px}}
 </style>
 </head>
 <body>
-<div class="app-root">
 <div id="root"></div>
 <div class="modal" id="modal"><div class="modal-card"><h4 id="modal-title">Aviso</h4><p id="modal-text"></p><button class="btn-reset" id="modal-ok" style="border-color:var(--accent);color:var(--accent)">Fechar</button></div></div>
-</div>
 <script>
 /* =====================================================================
    PRECIFICADOR DE PISCICULTURA — método Embrapa (Casaca & Queiróz)
@@ -220,8 +459,8 @@ function defaultState() {
     tab: "geral",
     cultivo: { produtor: "", localidade: "", municipio: "", dataAnalise: hojeISO(), numeroViveiro: "", areaViveiro: 0, numeroCultivo: "", dataEstocagem: "", dataDespesca: "", elaborador: "" },
     especies: [
+      { nome: "Tambaqui", pesoMedioFinal: 1500, qtd: 0, precoUnit: 0 },
       { nome: "Tilápia", pesoMedioFinal: 800, qtd: 0, precoUnit: 0 },
-      { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
@@ -254,33 +493,37 @@ function defaultState() {
     vidaUtilConstrucao: 0,
     materiais: [
       { id: 1, nome: "Tubos concreto", unidade: "Unidade", qtd: 0, preco: 0 },
-      { id: 2, nome: "Tubos PVC", unidade: "m", qtd: 0, preco: 0 },
-      { id: 3, nome: "Joelho PVC", unidade: "Unidade", qtd: 0, preco: 0 },
+      { id: 2, nome: "Tubos PVC (encanamento/drenagem)", unidade: "m", qtd: 0, preco: 0 },
+      { id: 3, nome: "Joelho e conexões PVC", unidade: "Unidade", qtd: 0, preco: 0 },
       { id: 4, nome: "Tijolos", unidade: "Milheiro", qtd: 0, preco: 0 },
       { id: 5, nome: "Cimento", unidade: "Sacos", qtd: 0, preco: 0 },
       { id: 6, nome: "Areia", unidade: "m³", qtd: 0, preco: 0 },
       { id: 7, nome: "Pedra britada", unidade: "m³", qtd: 0, preco: 0 },
-      { id: 8, nome: "Madeira", unidade: "m³", qtd: 0, preco: 0 },
-      { id: 9, nome: "Ferro", unidade: "kg", qtd: 0, preco: 0 },
-      { id: 10, nome: "Outros (materiais + projetos)", unidade: "Unidade", qtd: 0, preco: 0 }
+      { id: 8, nome: "Madeira / estrutura de apoio", unidade: "m³", qtd: 0, preco: 0 },
+      { id: 9, nome: "Ferro / ferragens", unidade: "kg", qtd: 0, preco: 0 },
+      { id: 10, nome: "Tanque Geomembrana (PEAD)", unidade: "m²", qtd: 0, preco: 0 },
+      { id: 11, nome: "Selador / Solda para geomembrana", unidade: "Unidade", qtd: 0, preco: 0 },
+      { id: 12, nome: "Grade de proteção / anti-fuga para tanque", unidade: "Unidade", qtd: 0, preco: 0 },
+      { id: 13, nome: "Outros (materiais + projetos)", unidade: "Unidade", qtd: 0, preco: 0 }
     ],
     maoDeObraConstrucao: 0, manutencaoConstrucao: 0,
     equipamentos: [
       { id: 1, nome: "Rede", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
       { id: 2, nome: "Tarrafa", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
       { id: 3, nome: "Tanque-rede", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 4, nome: "Aerador", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 5, nome: "Motobomba", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 6, nome: "Comedouro", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 7, nome: "Poço", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 8, nome: "Instalações de frio", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 9, nome: "Veículo", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 10, nome: "Depósito/escritório", unidade: "m²", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 11, nome: "Instalações elétricas", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 12, nome: "Gerador", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 13, nome: "Balança", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 14, nome: "Oxímetro", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 15, nome: "Kit de análise", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 }
+      { id: 4, nome: "Aerador de pás", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 5, nome: "Aerador tipo turbina", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 5 },
+      { id: 6, nome: "Motobomba / Bomba d'água", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 7, nome: "Comedouro automático / manual", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 8, nome: "Poço artesiano", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 9, nome: "Instalações de frio", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 10, nome: "Veículo", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 11, nome: "Depósito/escritório", unidade: "m²", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 12, nome: "Instalações elétricas", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 13, nome: "Gerador elétrico", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 14, nome: "Balança", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 15, nome: "Oxímetro", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 16, nome: "Kit de análise de água / Medidores", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 }
     ],
     manutencaoEquipamentos: 0,
     biometrias: Array.from({ length: 12 }, () => ({ data: "", pesoMedio: "" })),
@@ -498,17 +741,52 @@ document.addEventListener("input", function (ev) {
 }, true);
 document.addEventListener("change", onFieldChange, true);
 function rebuildActiveTab() { render(); }
-
 document.addEventListener("click", function (ev) {
   const btn = ev.target.closest("[data-action]");
   if (!btn) return;
   const action = btn.getAttribute("data-action");
   if (action.indexOf("tab:") === 0) { switchTab(action.slice(4)); return; }
-  if (action === "print") { window.print(); return; }
+  if (action === "print") { printAllTabs(); return; }
   if (action === "reset") { showConfirm("Limpar todos os dados digitados?", "Isso apaga os dados salvos neste aparelho/navegador e restaura o formulário em branco. Recomendamos salvar uma cópia antes.", "Sim, limpar", "Cancelar", function (ok) { if (ok) { try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} window.location.reload(); } }); return; }
   if (action === "export") { exportJSON(); return; }
   if (action === "import") { pickJSONFile(importJSONFile); return; }
 });
+
+/* ===================== FUNÇÃO IMPRIMIR TODAS AS ABAS / RELATÓRIO PDF COMPLETO ===================== */
+function printAllTabs() {
+  const currentTab = S.tab;
+  const root = document.getElementById("root");
+  
+  // Renderiza todas as 8 etapas em sequência com quebra de página
+  let printHtml = topbarHTML() + '<main class="content">';
+  
+  TABS.forEach((t, idx) => {
+    printHtml += '<div class="' + (idx > 0 ? "print-page-break" : "") + '">';
+    switch (t.id) {
+      case "geral": printHtml += tabGeralHTML(); break;
+      case "levantamento": printHtml += tabLevantamentoHTML(); break;
+      case "implantacao": printHtml += tabImplantacaoHTML(); break;
+      case "operacional": printHtml += tabOperacionalHTML(); break;
+      case "indicadores": printHtml += tabIndicadoresHTML(); break;
+      case "precificacao": printHtml += tabPrecificacaoHTML(); break;
+      case "biometrias": printHtml += tabBiometriasHTML(); break;
+      case "analises": printHtml += tabAnalisesHTML(); break;
+    }
+    printHtml += '</div>';
+  });
+  
+  printHtml += '</main>' + footerHTML();
+  root.innerHTML = printHtml;
+  updateLive();
+
+  // Executa a janela de impressão nativa
+  setTimeout(() => {
+    window.print();
+    // Restaura a aba selecionada anteriormente após a impressão
+    S.tab = currentTab;
+    render();
+  }, 300);
+}
 
 let confirmHandler = null;
 function showConfirm(title, text, okLabel, cancelLabel, cb) {
@@ -543,17 +821,16 @@ document.addEventListener("keydown", function (ev) {
 });
 
 function topbarHTML() {
-  return '' +
-    '<header class="topbar">' +
+  return '<header class="topbar">' +
       '<div class="brand"><span class="logo">🐟</span><div>' +
         '<div class="brand-title">Precificador de Piscicultura</div>' +
-        '<div class="brand-sub">Modelo Embrapa (Casaca &amp; Queiróz) — GitHub Pages Ready</div>' +
+        '<div class="brand-sub">Modelo Embrapa (Casaca &amp; Queiróz) — todos os cálculos conectados entre as etapas</div>' +
       '</div></div>' +
       '<div class="toolbar">' +
         '<span class="save-badge" id="save-badge"></span>' +
         '<button class="btn-reset" data-action="export" title="Baixar um arquivo JSON com seus dados">💾 Salvar arquivo</button>' +
         '<button class="btn-reset" data-action="import" title="Carregar um arquivo JSON salvo anteriormente">📂 Carregar arquivo</button>' +
-        '<button class="btn-reset" data-action="print" title="Imprimir ou salvar em PDF">🖨️ Imprimir / PDF</button>' +
+        '<button class="btn-reset" data-action="print" title="Imprimir ou salvar em PDF o relatório completo">🖨️ Relatório Completo PDF</button>' +
         '<button class="btn-reset" data-action="reset" title="Limpar todos os dados">↺ Reiniciar</button>' +
       '</div>' +
     '</header>';
@@ -565,13 +842,16 @@ function tabsBarHTML() {
 }
 function footerHTML() {
   return '<footer class="foot">Créditos metodológicos: Jorge de Matos Casaca e Fernanda Queiróz e Silva (planilhas Embrapa de custo de produção de peixes). ' +
-    'Hospedado via GitHub Pages.</footer>';
+    'Arquivo offline — seus dados ficam neste dispositivo, salvos automaticamente nesta página.</footer>';
 }
 function orientacoesHTML() {
   return '<details class="orient"><summary>Orientações de uso (metodologia Embrapa)</summary><ul>' +
     "<li>Preencha os dados nas etapas ①/② (e depois ⑦/⑧): as demais etapas apenas exibem os resultados das fórmulas.</li>" +
-    "<li>A planilha destina-se a <b>viveiros escavados</b>; calcule o custo <b>por cultivo e por viveiro</b>.</li>" +
-    "<li>Atualize os valores de despesas e receitas para a <b>data da análise do custo de produção</b>.</li>" +
+    "<li>A planilha destina-se a <b>viveiros escavados e tanques revestidos/geomembrana</b>; calcule o custo <b>por cultivo e por viveiro</b>.</li>" +
+    "<li>Serve para monocultivo ou policultivo — mas a etapa ⑦ Biometrias avalia apenas a <b>espécie principal</b> (a primeira da lista).</li>" +
+    "<li>Atualize os valores de despesas e receitas para a <b>data da análise do custo de produção</b>, evitando o efeito da inflação no período.</li>" +
+    "<li>Depreciações de bens e equipamentos devem ser rateadas proporcionalmente ao uso no viveiro avaliado.</li>" +
+    "<li>Dica: use 💾 Salvar arquivo antes de grandes alterações; o backup fica em um arquivo JSON seu.</li>" +
   "</ul></details>";
 }
 function render() {
@@ -592,18 +872,18 @@ function render() {
   html += "</main>" + footerHTML();
   root.innerHTML = html;
   updateSaveBadge();
+  updateLive();
 }
 
 function tabGeralHTML() {
-  return '' +
-    '<section class="fade">' +
+  return '<section class="fade">' +
       '<h2>Dados gerais do cultivo</h2>' +
-      '<p class="hint">Informações básicas do empreendimento e do ciclo.</p>' +
+      '<p class="hint">Informações básicas do empreendimento e do ciclo. Estas alimentam automaticamente todas as demais etapas.</p>' +
       '<div class="grid2">' +
         '<label>Nome do proprietário<br>' + inputTxt(S.cultivo.produtor, "cultivo.produtor") + '</label>' +
         '<label>Localidade<br>' + inputTxt(S.cultivo.localidade, "cultivo.localidade") + '</label>' +
         '<label>Município/Estado<br>' + inputTxt(S.cultivo.municipio, "cultivo.municipio") + '</label>' +
-        '<label>Número do viveiro<br>' + inputTxt(S.cultivo.numeroViveiro, "cultivo.numeroViveiro") + '</label>' +
+        '<label>Número do viveiro / tanque<br>' + inputTxt(S.cultivo.numeroViveiro, "cultivo.numeroViveiro") + '</label>' +
         '<label>Área do viveiro (ha)<br>' + inputNum(S.cultivo.areaViveiro, "cultivo.areaViveiro") + '</label>' +
         '<label>Número do cultivo<br>' + inputTxt(S.cultivo.numeroCultivo, "cultivo.numeroCultivo") + '</label>' +
         '<label>Data da estocagem<br>' + inputDate(S.cultivo.dataEstocagem, "cultivo.dataEstocagem") + '</label>' +
@@ -612,6 +892,7 @@ function tabGeralHTML() {
         '<div class="infobox">Período de cultivo calculado: <b>' + outSpan("periodo") + '</b></div>' +
       '</div>' +
       '<h3>Espécies produzidas</h3>' +
+      '<p class="hint">Lançamento por espécie — quantidade total produzida e preço médio unitário obtido na venda.</p>' +
       '<table class="tbl"><thead><tr><th>Espécie</th><th>Peso médio final (g)</th><th>Quantidade (kg)</th><th>Preço unitário (R$/kg)</th></tr></thead><tbody>' +
       S.especies.map((e, i) =>
         '<tr><td>' + inputTxt(e.nome, "especies." + i + ".nome") + '</td>' +
@@ -634,11 +915,11 @@ function tabGeralHTML() {
 }
 
 function tabLevantamentoHTML() {
-  return '' +
-    '<section class="fade">' +
+  return '<section class="fade">' +
       '<h2>Levantamento de dados</h2>' +
-      '<p class="hint">Insumos e serviços usados na formação do custo.</p>' +
-      '<h3>Construção do viveiro — máquinas (horas)</h3>' +
+      '<p class="hint">Insumos e serviços usados na formação do custo. Valores lançados aqui aparecem automaticamente nas etapas ③ e ④.</p>' +
+
+      '<h3>Construção do viveiro / infraestrutura — máquinas (horas)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
       S.maquinas.map((m, i) =>
         '<tr><td>' + inputTxt(m.nome, "maquinas." + i + ".nome") + '</td>' +
@@ -649,10 +930,12 @@ function tabLevantamentoHTML() {
       ).join("") +
       '</tbody></table>' +
       '<div class="subtotal">Subtotal máquinas: <b>' + outSpan("sub-maq") + '</b></div>' +
-      '<h3>Vida útil da construção</h3>' +
+
+      '<h3>Vida útil da construção / infraestrutura</h3>' +
       '<label>Anos de vida útil:<br>' + inputNum(S.vidaUtilConstrucao, "vidaUtilConstrucao") + '</label>' +
       '<div class="info">Depreciação anual (construção) = subtotal ÷ vida útil × 0,9 → <b>' + outSpan("dep-constr") + '</b></div>' +
-      '<h3>Sistema de abastecimento e escoamento (materiais)</h3>' +
+
+      '<h3>Sistema de abastecimento, escoamento e reservatórios (materiais / geomembrana)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
       S.materiais.map((m, i) =>
         '<tr><td>' + inputTxt(m.nome, "materiais." + i + ".nome") + '</td>' +
@@ -661,13 +944,14 @@ function tabLevantamentoHTML() {
           '<td>' + inputNum(m.preco, "materiais." + i + ".preco") + '</td>' +
           '<td class="calc">' + outSpan("vmat/" + i) + '</td></tr>'
       ).join("") +
-        '<tr><td>Mão-de-obra na construção</td><td>R$</td>' +
+        '<tr><td>Mão-de-obra na construção / instalação</td><td>R$</td>' +
           '<td colspan="2">' + inputNum(S.maoDeObraConstrucao, "maoDeObraConstrucao") + '</td>' +
           '<td class="calc">' + outSpan("v-moc") + '</td></tr>' +
       '</tbody></table>' +
       '<div class="subtotal">Subtotal sistema (com mão-de-obra): <b>' + outSpan("sub-mat") + '</b></div>' +
-      '<label>Manutenção na construção (R$/ano):<br>' + inputNum(S.manutencaoConstrucao, "manutencaoConstrucao") + '</label>' +
-      '<h3>Equipamentos</h3>' +
+      '<label>Manutenção na construção / estrutura (R$/ano):<br>' + inputNum(S.manutencaoConstrucao, "manutencaoConstrucao") + '</label>' +
+
+      '<h3>Equipamentos (com vida útil individual)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Qtde</th><th>Preço un. (R$)</th><th>Vida útil (anos)</th><th>Valor (R$)</th><th>Deprec./ano (R$)</th></tr></thead><tbody>' +
       S.equipamentos.map((e, i) =>
         '<tr><td>' + inputTxt(e.nome, "equipamentos." + i + ".nome") + '</td>' +
@@ -681,6 +965,7 @@ function tabLevantamentoHTML() {
       '</tbody></table>' +
       '<div class="subtotal">Subtotal equipamentos: <b>' + outSpan("sub-eq") + '</b> · Depreciação anual: <b>' + outSpan("dep-eq") + '</b></div>' +
       '<label>Manutenção de equipamentos (R$/ano):<br>' + inputNum(S.manutencaoEquipamentos, "manutencaoEquipamentos") + '</label>' +
+
       '<h3>Parâmetros financeiros</h3>' +
       '<div class="grid2">' +
         '<label>Juros sobre capital mobilizado (% ao ano)<br>' + inputNum(S.percentuais.jurosCapital, "percentuais.jurosCapital") + '</label>' +
@@ -688,10 +973,12 @@ function tabLevantamentoHTML() {
         '<label>Valor da terra (R$/ha)<br>' + inputNum(S.quantitativos.precoTerra, "quantitativos.precoTerra") + '</label>' +
         '<label>Juros sobre a terra (% ao ano)<br>' + inputNum(S.percentuais.jurosTerra, "percentuais.jurosTerra") + '</label>' +
       '</div>' +
+
       '<h3>Custos operacionais do cultivo</h3>' +
+      '<p class="hint">Insumos e despesas recorrentes do ciclo de engorda. Linhas calculadas automaticamente são marcadas no valor final.</p>' +
       '<table class="tbl" id="op-tbl"><thead><tr><th>Item</th><th>Unidade</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
-        opRow("Alevinos", "Unidade", "quantitativos.alevinosQtd", "quantitativos.alevinosPrecoUnit", "out-alev") +
-        '<tr><td>Peso médio dos alevinos (g)</td><td>—</td><td colspan="2">' + inputNum(S.quantitativos.alevinosPesoMedio, "quantitativos.alevinosPesoMedio") + '</td><td class="calc">—</td></tr>' +
+        opRow("Alevinos / Juvenis", "Unidade", "quantitativos.alevinosQtd", "quantitativos.alevinosPrecoUnit", "out-alev") +
+        '<tr><td>Peso médio inicial (g)</td><td>—</td><td colspan="2">' + inputNum(S.quantitativos.alevinosPesoMedio, "quantitativos.alevinosPesoMedio") + '</td><td class="calc">—</td></tr>' +
         opRow("Mão de obra cultivo + encargos", "hora", "quantitativos.maoDeObraCultivoHoras", "quantitativos.maoDeObraCultivoValor", "out-mob") +
         opRow("Ração 1", "kg", "quantitativos.racao1Qtd", "quantitativos.racao1Preco", "out-r1") +
         opRow("Ração 2", "kg", "quantitativos.racao2Qtd", "quantitativos.racao2Preco", "out-r2") +
@@ -707,11 +994,28 @@ function tabLevantamentoHTML() {
         opRow("Transporte", "km", "quantitativos.transporteQtd", "quantitativos.transportePreco", "out-transp") +
         opRow("Assistência técnica", "Visita", "quantitativos.assistenciaQtd", "quantitativos.assistenciaPreco", "out-assist") +
         opRowSimple("Gastos administrativos e financeiros", "quantitativos.gastosAdm", "out-gadm") +
-        opRowSimple("Medicamentos e produtos químicos", "quantitativos.medicamentos", "out-medic") +
+        opRowSimple("Medicamentos e produtos químicos / probióticos", "quantitativos.medicamentos", "out-medic") +
         opRowSimple("Outros custos operacionais", "quantitativos.outrosOperacionais", "out-outros") +
         opRowSimple("Arrendamento", "quantitativos.arrendamento", "out-arrend") +
         opRowSimple("Pró-labore (retirada)", "quantitativos.proLaboreSalario", "out-prolab") +
       '</tbody></table>' +
+
+      '<h3>Auxiliares de cálculo (opcionais)</h3>' +
+      '<p class="hint">Estes campos alimentam apenas os cálculos automáticos de esterco e horas-máquina via movimentação de terra.</p>' +
+      '<div class="grid2">' +
+        '<label>Nº de animais para produção de esterco<br>' + inputNum(S.quantitativos.animais, "quantitativos.animais") + '</label>' +
+        '<label>Peso médio dos animais (kg)<br>' + inputNum(S.quantitativos.pesoAnimais, "quantitativos.pesoAnimais") + '</label>' +
+        '<label>Produção de esterco (% do peso vivo/dia)<br>' + inputNum(S.percentuais.producaoEstercoDia, "percentuais.producaoEstercoDia") + '</label>' +
+        '<label>Matéria seca do esterco (%)<br>' + inputNum(S.percentuais.materiaSecaEsterco, "percentuais.materiaSecaEsterco") + '</label>' +
+        '<label>Esterco produzido (t)<br>' + inputNum(S.quantitativos.estercoProduzido, "quantitativos.estercoProduzido") + '</label>' +
+        '<label>Horas/máquina informadas manualmente<br>' + inputNum(S.quantitativos.horasMaquinaManual, "quantitativos.horasMaquinaManual") + '</label>' +
+        '<label>Comprimento do aterro (m)<br>' + inputNum(S.quantitativos.comprimentoAterro, "quantitativos.comprimentoAterro") + '</label>' +
+        '<label>Altura do aterro (m)<br>' + inputNum(S.quantitativos.alturaAterro, "quantitativos.alturaAterro") + '</label>' +
+        '<label>Base maior do aterro (m)<br>' + inputNum(S.quantitativos.baseMaiorAterro, "quantitativos.baseMaiorAterro") + '</label>' +
+        '<label>Base menor do aterro (m)<br>' + inputNum(S.quantitativos.baseMenorAterro, "quantitativos.baseMenorAterro") + '</label>' +
+      '</div>' +
+      '<div class="info">Volume de aterro calculado: <b>' + outSpan("vol-aterro") + ' m³</b> · Horas-máquina estimadas (÷30): <b>' + outSpan("horas-maq") + '</b> · Esterco estimado: <b>' + outSpan("esterco-ton") + ' t</b></div>' +
+      '<p class="note">Observações metodológicas (Embrapa): uso indicado para viveiros escavados e revestidos; calcular sempre o custo por cultivo e por viveiro/tanque; valores em R$ atualizados para a data da análise; ratear depreciações conforme o uso no viveiro avaliado.</p>' +
     '</section>';
 }
 function opRow(label, unidade, pathQtd, pathPreco, outKey) {
@@ -727,27 +1031,27 @@ function opRowSimple(label, pathValor, outKey) {
 
 function tabImplantacaoHTML() {
   const D = computeAll(S).D;
-  return '' +
-    '<section class="fade">' +
-      '<h2>Custo de implantação do viveiro</h2>' +
+  return '<section class="fade">' +
+      '<h2>Custo de implantação do viveiro / infraestrutura</h2>' +
+      '<p class="hint">Preenchido automaticamente a partir do levantamento (etapa ②).</p>' +
       '<table class="tbl"><thead><tr><th>Grupo</th><th>Valor (R$)</th><th>Depreciação anual (R$)</th></tr></thead><tbody>' +
-        '<tr><td>Construção do viveiro (máquinas)</td><td class="calc">' + fmtMoeda(D.totalMaquinas) + '</td><td class="calc">' + fmtMoeda(D.depConstrucao) + '</td></tr>' +
-        '<tr><td>Sistema de abastecimento/escoamento (materiais + M.O.)</td><td class="calc">' + fmtMoeda(D.totalMateriais) + '</td><td class="calc">' + fmtMoeda(D.depAbastecimento) + '</td></tr>' +
-        '<tr><td>Equipamentos</td><td class="calc">' + fmtMoeda(D.valorEquipamentos) + '</td><td class="calc">' + fmtMoeda(D.deprecEquip) + '</td></tr>' +
-        '<tr class="total"><td>Custo total do viveiro</td><td class="calc">' + fmtMoeda(D.custoTotalViveiro) + '</td><td class="calc">' + fmtMoeda(D.depreciacaoAnualTotal) + '</td></tr>' +
+        '<tr><td>Construção do viveiro / terraplanagem (máquinas)</td><td class="calc">' + fmtMoeda(D.totalMaquinas) + '</td><td class="calc">' + fmtMoeda(D.depConstrucao) + '</td></tr>' +
+        '<tr><td>Abastecimento, escoamento, tanques e geomembranas (materiais + M.O.)</td><td class="calc">' + fmtMoeda(D.totalMateriais) + '</td><td class="calc">' + fmtMoeda(D.depAbastecimento) + '</td></tr>' +
+        '<tr><td>Equipamentos (aeradores, bombas, etc.)</td><td class="calc">' + fmtMoeda(D.valorEquipamentos) + '</td><td class="calc">' + fmtMoeda(D.deprecEquip) + '</td></tr>' +
+        '<tr class="total"><td>Custo total da infraestrutura</td><td class="calc">' + fmtMoeda(D.custoTotalViveiro) + '</td><td class="calc">' + fmtMoeda(D.depreciacaoAnualTotal) + '</td></tr>' +
       '</tbody></table>' +
       '<div class="cards">' +
-        cardHTML("Custo de implantação do viveiro", fmtMoeda(D.custoTotalViveiro), null, "blue") +
+        cardHTML("Custo de implantação total", fmtMoeda(D.custoTotalViveiro), null, "blue") +
         cardHTML("Depreciação anual total", fmtMoeda(D.depreciacaoAnualTotal), "entra no COT", "orange") +
       '</div>' +
+      '<p class="note">Observação metodológica: conforme a planilha original, a depreciação das máquinas e da infraestrutura considera 90% do valor residual; equipamentos depreciam linearmente pela vida útil.</p>' +
     '</section>';
 }
-
 function tabOperacionalHTML() {
   const D = computeAll(S).D;
-  return '' +
-    '<section class="fade">' +
+  return '<section class="fade">' +
       '<h2>Custos operacionais — COE, COT e CT</h2>' +
+      '<p class="hint">Os valores abaixo chegam automaticamente do levantamento. Alterações nos insumos refletem aqui ao navegar entre as etapas.</p>' +
       '<h3>Custo Operacional Efetivo (COE)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Valor (R$)</th><th>% do COE</th></tr></thead><tbody id="coe-tbody">' +
         coeRowsHTML(D) +
@@ -766,6 +1070,11 @@ function tabOperacionalHTML() {
         '<tr><td>Custo de oportunidade</td><td class="calc">' + fmtMoeda(D.custoOportunidade) + '</td></tr>' +
         '<tr class="total"><td>Custo Total (CT) = COT + Custo de Oportunidade</td><td class="calc">' + fmtMoeda(D.custoTotal) + '</td></tr>' +
       '</tbody></table>' +
+      '<div class="cards">' +
+        cardHTML("COE total", fmtMoeda(D.coeTotal), fmtMoeda(D.ind.coeKg) + "/kg", "blue") +
+        cardHTML("COT total", fmtMoeda(D.cotTotal), fmtMoeda(D.ind.cotKg) + "/kg", "purple") +
+        cardHTML("Custo Total (CT)", fmtMoeda(D.custoTotal), fmtMoeda(D.ind.ctKg) + "/kg", "red") +
+      '</div>' +
     '</section>';
 }
 function coeRowsHTML(D) {
@@ -776,7 +1085,6 @@ function coeRowsHTML(D) {
   ).join("") +
     '<tr class="total"><td>COE Total</td><td class="calc">' + fmtMoeda(D.coeTotal) + '</td><td class="calc">100%</td></tr>';
 }
-
 function tabIndicadoresHTML() {
   const D = computeAll(S).D;
   const ind = D.ind;
@@ -815,15 +1123,21 @@ function tabIndicadoresHTML() {
     ["Período de Recuperação do Capital", "ciclos", ind.recuperacaoCapital],
     ["Custo de implantação do viveiro", "R$", ind.custoImplantacao]
   ];
-  return '' +
-    '<section class="fade">' +
+  return '<section class="fade">' +
       '<h2>Indicadores técnicos e econômicos</h2>' +
+      '<p class="hint">Síntese do desempenho do cultivo — calculada em tempo real a partir de todas as etapas anteriores.</p>' +
       '<div class="cards">' +
         cardHTML("Receita Bruta", fmtMoeda(ind.rb), fmtMoeda(ind.rbKg) + "/kg", "green") +
         cardHTML("Margem Bruta Unitária", fmtMoeda(ind.mbu), "MB " + fmt(ind.mb, 1) + "%", "blue") +
         cardHTML("Margem Líquida Unitária", fmtMoeda(ind.mlu), "ML " + fmt(ind.ml, 1) + "%", "purple") +
         cardHTML("Produtividade", fmt(ind.produtividade, 0) + " kg/ha/ano", null, "orange") +
+        cardHTML("Conversão alimentar", fmt(ind.conversaoAlimentar, 2) + " kg ração/kg", null, "orange") +
+        cardHTML("Sobrevivência", fmt(ind.sobrevivencia, 1) + "%", null, "orange") +
+        cardHTML("Taxa de crescimento", fmt(ind.taxaCrescimento, 1) + " g/dia", null, "orange") +
+        cardHTML("Preço de nivelamento (COT)", fmtMoeda(ind.prelonCOT), "preço mínimo p/ cobrir COT", "red") +
       '</div>' +
+      '<h3>Tabela completa</h3>' +
+      '<p class="note">Valores em US$ convertidos pela cotação informada na etapa ① (Dados gerais).</p>' +
       '<table class="tbl"><thead><tr><th>Indicador</th><th>Unidade</th><th>Resultado</th>' + (dolar > 0 ? '<th>US$</th>' : '') + '</tr></thead><tbody>' +
       rows.map(row =>
         '<tr><td>' + esc(row[0]) + '</td><td>' + esc(row[1]) + '</td><td class="calc">' + cell(row) + '</td>' +
@@ -836,9 +1150,9 @@ function tabIndicadoresHTML() {
 
 function tabPrecificacaoHTML() {
   const D = computeAll(S).D;
-  return '' +
-    '<section class="fade">' +
+  return '<section class="fade">' +
       '<h2>Precificação do produto</h2>' +
+      '<p class="hint">Aplicação direta sobre os indicadores: use o custo como base e aplique sua margem desejada.</p>' +
       '<div class="grid2">' +
         '<label>Base de cálculo' + selectHTML(S.markupModalidade, "markupModalidade", [
           { v: "cot", l: "Custo Operacional Total (COT)/kg" },
@@ -853,6 +1167,7 @@ function tabPrecificacaoHTML() {
       '</div>' +
       '<table class="tbl"><thead><tr><th>Cenário de markup</th><th>Preço (R$/kg)</th><th>Lucro líquido estimado</th></tr></thead>' +
         '<tbody id="prec-cenarios">' + precCenariosHTML(D) + '</tbody></table>' +
+      '<p class="note">O lucro líquido estimado considera preço − custo base (COE/COT/CT escolhido). Margens são referências gerenciais: valide sempre com o mercado local.</p>' +
     '</section>';
 }
 function precoSugerido(D) {
@@ -875,11 +1190,10 @@ function precCenariosHTML(D) {
       '<td class="calc">' + fmtMoeda(lu) + ' (' + (base > 0 ? fmt((lu / pr) * 100, 1) : "—") + '%)</td></tr>';
   }).join("");
 }
-
 function tabBiometriasHTML() {
-  return '' +
-    '<section class="fade">' +
+  return '<section class="fade">' +
       '<h2>Biometrias — acompanhamento do cultivo</h2>' +
+      '<p class="hint">Registre pesagens periódicas. O ganho de peso diário, PEC e produtividade são calculados automaticamente.</p>' +
       '<table class="tbl"><thead><tr><th>#</th><th>Data</th><th>Peso médio (g)</th><th>Dias de cultivo</th><th>Ganho (g/dia)</th><th>Produção kg/viveiro/dia</th><th>PEC (kg/viveiro)</th><th>Produtividade (kg/ha/ano)</th></tr></thead><tbody>' +
       S.biometrias.map((b, i) =>
         '<tr><td>' + (i + 1) + '</td>' +
@@ -893,13 +1207,13 @@ function tabBiometriasHTML() {
       ).join("") +
       '</tbody></table>' +
       '<div class="info" id="bio-info">Preencha as pesagens acima — os indicadores aparecem automaticamente.</div>' +
+      '<p class="note">Obs.: inclua uma linha com a data da estocagem e o peso dos alevinos para servir de referência às taxas de crescimento. Conforme a metodologia, esta etapa avalia a espécie principal (primeira da lista lançada).</p>' +
     '</section>';
 }
-
 function tabAnalisesHTML() {
-  return '' +
-    '<section class="fade">' +
-      '<h2>Análises físico-químicas e microbiológicas</h2>' +
+  return '<section class="fade">' +
+      '<h2>Análises físico-químicas e microbiológicas da água</h2>' +
+      '<p class="hint">Parâmetros de qualidade da água do viveiro, seguindo a Planilha 6 da metodologia Embrapa. Informe a data e o resultado de cada análise.</p>' +
       '<table class="tbl"><thead><tr><th>Parâmetro</th><th>Data</th><th>Resultado</th></tr></thead><tbody>' +
       S.analises.map((a, i) =>
         '<tr><td>' + esc(a.parametro) + '</td>' +
@@ -907,6 +1221,7 @@ function tabAnalisesHTML() {
           '<td>' + inputTxt(a.resultado, "analises." + i + ".resultado") + '</td></tr>'
       ).join("") +
       '</tbody></table>' +
+      '<p class="note">Esta etapa registra os laudos das análises de água. Eles documentam as condições do cultivo junto ao custo de produção.</p>' +
     '</section>';
 }
 
@@ -922,6 +1237,9 @@ function resolveOut(key, D, S) {
     case "dep-constr": return fmtMoeda(D.depConstrucao);
     case "dep-eq": return fmtMoeda(D.deprecEquip);
     case "v-moc": return fmtMoeda(defValue(S.maoDeObraConstrucao));
+    case "vol-aterro": return fmt(D.volumeAterro, 1);
+    case "horas-maq": return fmt(D.horasMaquinaTotal, 0);
+    case "esterco-ton": return fmt(D.estercoTon, 2);
     case "out-alev": return fmtMoeda(D.coeItens[0].valor);
     case "out-mob": return fmtMoeda(D.coeItens[1].valor);
     case "out-r1": return fmtMoeda(defValue(S.quantitativos.racao1Qtd) * defValue(S.quantitativos.racao1Preco));
@@ -942,6 +1260,12 @@ function resolveOut(key, D, S) {
     case "out-outros": return fmtMoeda(defValue(S.quantitativos.outrosOperacionais));
     case "out-arrend": return fmtMoeda(defValue(S.quantitativos.arrendamento));
     case "out-prolab": return fmtMoeda(defValue(S.quantitativos.proLaboreSalario));
+    case "prec-base": {
+      const base = D.ind[D.markupModalidade === "cot" ? "cotKg" : "ctKg"];
+      return fmtMoeda(base);
+    }
+    case "prec-sugerido": return fmtMoeda(precoSugerido(D));
+    case "prec-lucro": return fmtMoeda(lucroUnico(D));
   }
   if (key.indexOf("vmaq/") === 0) { const m = S.maquinas[+key.slice(5)]; return m ? fmtMoeda(defValue(m.qtd) * defValue(m.preco)) : "—"; }
   if (key.indexOf("vmat/") === 0) { const m = S.materiais[+key.slice(5)]; return m ? fmtMoeda(defValue(m.qtd) * defValue(m.preco)) : "—"; }
@@ -977,3 +1301,5 @@ boot();
 </script>
 </body>
 </html>
+index.html
+Exibindo index.html.
