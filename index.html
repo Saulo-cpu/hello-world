@@ -62,6 +62,7 @@ details.orient ul{margin:8px 0 0;padding-left:18px;font-size:.82rem;color:var(--
 .modal-card p{font-size:.86rem;color:var(--ink2);margin:0 0 16px}
 .modal-card button{margin-right:8px}
 
+/* Correção definitiva para texto em branco nos inputs/seletores */
 input.inp, select.inp, textarea { color: var(--ink) !important; background-color: var(--surface) !important; }
 option { background-color: var(--surface); color: var(--ink); }
 
@@ -91,47 +92,46 @@ option { background-color: var(--surface); color: var(--ink); }
 <div class="modal" id="modal"><div class="modal-card"><h4 id="modal-title">Aviso</h4><p id="modal-text"></p><button class="btn-reset" id="modal-ok" style="border-color:var(--accent);color:var(--accent)">Fechar</button></div></div>
 <script>
 "use strict";
-const defValue = function(v){ return (v === "" || v === null || v === undefined) ? 0 : Number(v); };
-const seguranca = function(x){ return (typeof x === "number" && isFinite(x) && !isNaN(x)) ? x : 0; };
-const fmt = function(v, d){
-  if (d === undefined) d = 2;
-  if (v === null || v === undefined || typeof v !== "number" || !isFinite(v) || isNaN(v)) return "—";
+const defValue = v => (v === "" || v === null || v === undefined ? 0 : Number(v));
+const seguranca = x => (typeof x === "number" && isFinite(x) && !isNaN(x) ? x : 0);
+const fmt = (v, d = 2) => {
+  if (v === null || v === undefined) return "—";
+  if (typeof v !== "number" || !isFinite(v) || isNaN(v)) return "—";
   return v.toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d });
 };
-const fmtMoeda = function(v){
-  if (v === null || v === undefined || typeof v !== "number" || !isFinite(v) || isNaN(v)) return "—";
+const fmtMoeda = v => {
+  if (v === null || v === undefined) return "—";
+  if (typeof v !== "number" || !isFinite(v) || isNaN(v)) return "—";
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 };
-
 function computeAll(S) {
   const q = S.quantitativos, p = S.percentuais, cul = S.cultivo;
-  const periodoCultivo = (cul.dataEstocagem && cul.dataDespesca)
+  const periodoCultivo = cul.dataEstocagem && cul.dataDespesca
     ? Math.round((new Date(cul.dataDespesca) - new Date(cul.dataEstocagem)) / 86400000) : 0;
 
-  const totalMaquinas = S.maquinas.reduce(function(s, i){ return s + defValue(i.qtd) * defValue(i.preco); }, 0);
-  const totalMateriais = S.materiais.reduce(function(s, i){ return s + defValue(i.qtd) * defValue(i.preco); }, 0) + defValue(S.maoDeObraConstrucao);
-  const valorEquipamentos = S.equipamentos.reduce(function(s, i){ return s + defValue(i.qtd) * defValue(i.preco); }, 0);
-  const deprecEquip = S.equipamentos.reduce(function(s, i){
-    return s + (defValue(i.vidaUtil) > 0 ? (defValue(i.qtd) * defValue(i.preco)) / defValue(i.vidaUtil) : 0);
-  }, 0);
+  const totalMaquinas = S.maquinas.reduce((s, i) => s + defValue(i.qtd) * defValue(i.preco), 0);
+  const totalMateriais = S.materiais.reduce((s, i) => s + defValue(i.qtd) * defValue(i.preco), 0) + defValue(S.maoDeObraConstrucao);
+  const valorEquipamentos = S.equipamentos.reduce((s, i) => s + defValue(i.qtd) * defValue(i.preco), 0);
+  const deprecEquip = S.equipamentos.reduce((s, i) =>
+    s + (defValue(i.vidaUtil) > 0 ? (defValue(i.qtd) * defValue(i.preco)) / defValue(i.vidaUtil) : 0), 0);
 
   const alevinosTotalQtd = defValue(q.alevinosQtd);
   const alevinosPrecoMedio = alevinosTotalQtd > 0 ? (alevinosTotalQtd * defValue(q.alevinosPrecoUnit)) / alevinosTotalQtd : 0;
 
-  const estercoTon = (defValue(p.producaoEstercoDia) > 0 && defValue(p.materiaSecaEsterco) > 0)
+  const estercoTon = defValue(p.producaoEstercoDia) > 0 && defValue(p.materiaSecaEsterco) > 0
     ? (defValue(q.animais) * defValue(q.pesoAnimais) * (defValue(p.producaoEstercoDia) / 100) * periodoCultivo) / 1000 : 0;
 
-  const volumeAterro = (defValue(q.comprimentoAterro) > 0 && defValue(q.alturaAterro) > 0)
+  const volumeAterro = defValue(q.comprimentoAterro) > 0 && defValue(q.alturaAterro) > 0
     ? ((defValue(q.baseMaiorAterro) + defValue(q.baseMenorAterro)) / 2) * defValue(q.comprimentoAterro) * defValue(q.alturaAterro) * 1.2 : 0;
   const horasMaquinasCalc = volumeAterro > 0 ? volumeAterro / 30 : 0;
   const horasMaquinaTotal = defValue(q.horasMaquinaManual) || horasMaquinasCalc;
 
-  const producaoTotalKg = S.especies.reduce(function(s, e){ return s + defValue(e.qtd); }, 0);
-  const receitaPescado = S.especies.reduce(function(s, e){ return s + defValue(e.qtd) * defValue(e.precoUnit); }, 0);
+  const producaoTotalKg = S.especies.reduce((s, e) => s + defValue(e.qtd), 0);
+  const receitaPescado = S.especies.reduce((s, e) => s + defValue(e.qtd) * defValue(e.precoUnit), 0);
   const receitaBruta = receitaPescado + defValue(S.outrasReceitas);
   const precoMedioVenda = producaoTotalKg > 0 ? receitaPescado / producaoTotalKg : 0;
   const pesoMedioFinalGlobal = producaoTotalKg > 0
-    ? (S.especies.reduce(function(s, e){ return s + defValue(e.qtd) * defValue(e.pesoMedioFinal); }, 0) / producaoTotalKg) : 0;
+    ? (S.especies.reduce((s, e) => s + defValue(e.qtd) * defValue(e.pesoMedioFinal), 0) / producaoTotalKg) : 0;
   const biomassaInicial = (defValue(q.alevinosPesoMedio) * alevinosTotalQtd) / 1000;
 
   const depConstrucao = defValue(S.vidaUtilConstrucao) > 0 ? (totalMaquinas / defValue(S.vidaUtilConstrucao)) * 0.9 : 0;
@@ -157,7 +157,7 @@ function computeAll(S) {
     { nome: "Manutenção", valor: defValue(S.manutencaoConstrucao) + defValue(S.manutencaoEquipamentos) },
     { nome: "Arrendamento", valor: defValue(q.arrendamento) }
   ];
-  const coeTotal = coeItens.reduce(function(s, i){ return s + i.valor; }, 0);
+  const coeTotal = coeItens.reduce((s, i) => s + i.valor, 0);
   const cotTotal = coeTotal + defValue(q.proLaboreSalario) + depreciacaoAnualTotal;
   const jurosCapital = (defValue(p.jurosCapital) / 100) * custoTotalViveiro;
   const jurosTerra = defValue(q.precoTerra) * defValue(q.terraHa) * defValue(p.jurosTerra) / 100;
@@ -166,7 +166,7 @@ function computeAll(S) {
 
   const racaoQtdTotal = defValue(q.racao1Qtd) + defValue(q.racao2Qtd);
   const ind = {
-    periodoCultivo: periodoCultivo,
+    periodoCultivo,
     areaViveiro: defValue(cul.areaViveiro),
     quantidadePeixes: seguranca(producaoTotalKg / pesoMedioFinalGlobal),
     densidade: seguranca(alevinosTotalQtd / (defValue(cul.areaViveiro) * 10000)),
@@ -198,14 +198,14 @@ function computeAll(S) {
     custoImplantacao: custoTotalViveiro
   };
 
-  const bioComp = S.biometrias.map(function(b, idx){
+  const bioComp = S.biometrias.map((b, idx) => {
     if (!b.data || b.pesoMedio === "" || Number(b.pesoMedio) <= 0) return null;
     const dias = Math.round((new Date(b.data) - new Date(cul.dataEstocagem)) / 86400000);
     if (isNaN(dias) || dias < 0) return null;
-    const pesoPrimeira = Number((S.biometrias.find(function(x){ return x.data && Number(x.pesoMedio) > 0; }) || {}).pesoMedio) || defValue(q.alevinosPesoMedio);
+    const pesoPrimeira = Number((S.biometrias.find(x => x.data && Number(x.pesoMedio) > 0) || {}).pesoMedio) || defValue(q.alevinosPesoMedio);
     const ganhoDia = dias > 0 ? (Number(b.pesoMedio) - pesoPrimeira) / dias : 0;
     return {
-      idx: idx + 1, dias: dias, peso: Number(b.pesoMedio), ganhoDia: ganhoDia,
+      idx: idx + 1, dias, peso: Number(b.pesoMedio), ganhoDia,
       viveiroKgDia: ganhoDia * defValue(q.alevinosQtd) / 1000,
       pec: dias > 0 ? (Number(b.pesoMedio) * 1000) / defValue(cul.areaViveiro) : 0,
       produtividade: (Number(b.pesoMedio) * defValue(q.alevinosQtd) * 365) / (defValue(cul.areaViveiro) * dias)
@@ -213,18 +213,13 @@ function computeAll(S) {
   }).filter(Boolean);
 
   return {
-    S: S,
-    D: {
-      periodoCultivo: periodoCultivo, totalMaquinas: totalMaquinas, totalMateriais: totalMateriais,
-      valorEquipamentos: valorEquipamentos, deprecEquip: deprecEquip, alevinosTotalQtd: alevinosTotalQtd,
-      alevinosPrecoMedio: alevinosPrecoMedio, estercoTon: estercoTon, volumeAterro: volumeAterro,
-      horasMaquinasCalc: horasMaquinasCalc, horasMaquinaTotal: horasMaquinaTotal, producaoTotalKg: producaoTotalKg,
-      receitaBruta: receitaBruta, receitaPescado: receitaPescado, precoMedioVenda: precoMedioVenda,
-      pesoMedioFinalGlobal: pesoMedioFinalGlobal, biomassaInicial: biomassaInicial, depConstrucao: depConstrucao,
-      depAbastecimento: depAbastecimento, custoTotalViveiro: custoTotalViveiro, depreciacaoAnualTotal: depreciacaoAnualTotal,
-      coeItens: coeItens, coeTotal: coeTotal, cotTotal: cotTotal, jurosCapital: jurosCapital, jurosTerra: jurosTerra,
-      custoOportunidade: custoOportunidade, custoTotal: custoTotal, ind: ind, bioComp: bioComp,
-      dolar: defValue(S.dolar), margemMarkup: defValue(S.margemMarkup), markupModalidade: S.markupModalidade
+    S, D: {
+      periodoCultivo, totalMaquinas, totalMateriais, valorEquipamentos, deprecEquip,
+      alevinosTotalQtd, alevinosPrecoMedio, estercoTon, volumeAterro, horasMaquinasCalc, horasMaquinaTotal,
+      producaoTotalKg, receitaBruta, receitaPescado, precoMedioVenda, pesoMedioFinalGlobal, biomassaInicial,
+      depConstrucao, depAbastecimento, custoTotalViveiro, depreciacaoAnualTotal,
+      coeItens, coeTotal, cotTotal, jurosCapital, jurosTerra, custoOportunidade, custoTotal,
+      ind, bioComp, dolar: defValue(S.dolar), margemMarkup: defValue(S.margemMarkup), markupModalidade: S.markupModalidade
     }
   };
 }
@@ -245,7 +240,7 @@ function defaultState() {
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 }
     ],
-    outrasReceitas: 0, dolar: 5.5,
+    outrasReceitas: 0, dolar: 5.4,
     percentuais: { jurosCapital: 0, jurosTerra: 0, producaoEstercoDia: 0, materiaSecaEsterco: 0 },
     quantitativos: {
       terraHa: 0, precoTerra: 0, horasMaquinaManual: 0, comprimentoAterro: 0, alturaAterro: 0, baseMaiorAterro: 0, baseMenorAterro: 0,
@@ -305,12 +300,7 @@ function defaultState() {
       { id: 16, nome: "Kit de análise de água / Medidores", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 }
     ],
     manutencaoEquipamentos: 0,
-    biometrias: [
-      { data: "", pesoMedio: "" }, { data: "", pesoMedio: "" }, { data: "", pesoMedio: "" },
-      { data: "", pesoMedio: "" }, { data: "", pesoMedio: "" }, { data: "", pesoMedio: "" },
-      { data: "", pesoMedio: "" }, { data: "", pesoMedio: "" }, { data: "", pesoMedio: "" },
-      { data: "", pesoMedio: "" }, { data: "", pesoMedio: "" }, { data: "", pesoMedio: "" }
-    ],
+    biometrias: Array.from({ length: 12 }, () => ({ data: "", pesoMedio: "" })),
     parametrosPadrao: ["Temperatura (°C)", "Oxigênio (mg/L)", "pH", "Alcalinidade (mg/L)", "Dureza (mg/L)",
       "Transparência (cm)", "Volumetria (mL/100 L)", "Amônia total (mg/L)", "Nitrato (mg/L)", "Nitrito (mg/L)",
       "Ferro (mg/L)", "Ortofosfato (mg/L PO₄)", "Sulfeto (mg/L)", "Gás carbônico (mg/L)", "DBO (mg/L)", "DQO (mg/L)",
@@ -357,12 +347,12 @@ function updateSaveBadge() {
 function deepMerge(base, over) {
   if (Array.isArray(over)) {
     const out = Array.isArray(base) ? base.slice() : [];
-    over.forEach(function(v, i){ out[i] = deepMerge(out[i], v); });
+    over.forEach((v, i) => { out[i] = deepMerge(out[i], v); });
     return out;
   }
   if (over !== null && typeof over === "object") {
-    const out = (base !== null && typeof base === "object") ? Object.assign({}, base) : {};
-    Object.keys(over).forEach(function(k){ out[k] = deepMerge(out[k], over[k]); });
+    const out = base !== null && typeof base === "object" ? { ...base } : {};
+    Object.keys(over).forEach(k => { out[k] = deepMerge(out[k], over[k]); });
     return out;
   }
   return over === undefined ? base : over;
@@ -373,18 +363,18 @@ function exportJSON() {
   const a = document.createElement("a");
   a.href = url; a.download = "precificador-piscicultura-dados.json";
   document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
   showToast("Arquivo de dados gerado com sucesso.");
 }
 function pickJSONFile(cb) {
   const inp = document.createElement("input");
   inp.type = "file"; inp.accept = ".json,application/json";
-  inp.onchange = function(){ if (inp.files && inp.files[0]) cb(inp.files[0]); };
+  inp.onchange = () => { if (inp.files && inp.files[0]) cb(inp.files[0]); };
   inp.click();
 }
 function importJSONFile(file) {
   const fr = new FileReader();
-  fr.onload = function(){
+  fr.onload = () => {
     try {
       const st = JSON.parse(fr.result);
       if (!st || typeof st !== "object" || Array.isArray(st)) throw new Error();
@@ -404,12 +394,12 @@ function showToast(msg, isError) {
   t.className = "toast" + (isError ? " err" : "");
   t.textContent = msg;
   document.body.appendChild(t);
-  requestAnimationFrame(function(){ t.classList.add("show"); });
-  setTimeout(function(){ t.classList.remove("show"); setTimeout(function(){ if (t.parentNode) t.remove(); }, 400); }, 3400);
+  requestAnimationFrame(() => t.classList.add("show"));
+  setTimeout(() => { t.classList.remove("show"); setTimeout(() => { if (t.parentNode) t.remove(); }, 400); }, 3400);
 }
 function parametrosPadraoToAnalises() {
   const pp = defaultState().parametrosPadrao;
-  return pp.map(function(p){ return { parametro: p, data: "", resultado: "" }; });
+  return pp.map(p => ({ parametro: p, data: "", resultado: "" }));
 }
 function initAnaliseDates() {
   if (!S.analises || !S.analises.length) {
@@ -417,7 +407,7 @@ function initAnaliseDates() {
     return;
   }
   const d = (S.cultivo && S.cultivo.dataAnalise) ? S.cultivo.dataAnalise : hojeISO();
-  S.analises.forEach(function(a){ if (!a.data && d) a.data = d; });
+  S.analises.forEach(a => { if (!a.data && d) a.data = d; });
 }
 
 function setPath(obj, path, val) {
@@ -456,17 +446,10 @@ function cardHTML(label, valor, sub, cor) {
   return '<div class="card-ind"><div class="lbl">' + esc(label) + '</div><div class="val ' + (cor || "") + '">' + valor + "</div>" + (sub ? '<div class="sub">' + esc(sub) + "</div>" : "") + "</div>";
 }
 function esc(s) {
-  return String(s == null ? "" : s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  return String(s == null ? "" : s).replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
 }
 function escAttr(s) {
-  return String(s == null ? "" : s)
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  return String(s == null ? "" : s).replace(/&/g, "&").replace(/"/g, """).replace(/</g, "<").replace(/>/g, ">");
 }
 function inputNum(value, path) {
   return '<input type="number" min="0" step="any" class="inp num" data-path="' + escAttr(path) + '" data-num="1" value="' + (Number(value) || 0) + '">';
@@ -478,9 +461,7 @@ function inputDate(value, path) {
   return '<input type="date" class="inp" data-path="' + escAttr(path) + '" value="' + escAttr(value || "") + '">';
 }
 function selectHTML(value, path, options) {
-  return '<select class="inp" data-path="' + escAttr(path) + '">' + options.map(function(o){
-    return '<option value="' + escAttr(o.v) + '"' + (String(value) === String(o.v) ? " selected" : "") + ">" + esc(o.l) + "</option>";
-  }).join("") + "</select>";
+  return '<select class="inp" data-path="' + escAttr(path) + '">' + options.map(o => '<option value="' + escAttr(o.v) + '"' + (String(value) === String(o.v) ? " selected" : "") + ">" + esc(o.l) + "</option>").join("") + "</select>";
 }
 function outSpan(key, cls) {
   return '<span class="' + (cls || "") + '" data-out="' + escAttr(key) + '">—</span>';
@@ -489,7 +470,7 @@ function outSpan(key, cls) {
 function updateLive() {
   const res = computeAll(S);
   const D = res.D;
-  document.querySelectorAll("[data-out]").forEach(function(el){
+  document.querySelectorAll("[data-out]").forEach(el => {
     const txt = resolveOut(el.getAttribute("data-out"), D, S);
     if (txt === null || txt === undefined) return;
     if (el.tagName === "INPUT") { if (el.value !== txt) el.value = txt; }
@@ -534,7 +515,7 @@ function printAllTabs() {
   const currentTab = S.tab;
   const root = document.getElementById("root");
   let printHtml = topbarHTML() + '<main class="content">';
-  TABS.forEach(function(t, idx){
+  TABS.forEach((t, idx) => {
     printHtml += '<div class="' + (idx > 0 ? "print-page-break" : "") + '">';
     switch (t.id) {
       case "geral": printHtml += tabGeralHTML(); break;
@@ -551,7 +532,7 @@ function printAllTabs() {
   printHtml += '</main>' + footerHTML();
   root.innerHTML = printHtml;
   updateLive();
-  setTimeout(function(){
+  setTimeout(() => {
     window.print();
     S.tab = currentTab;
     render();
@@ -601,9 +582,9 @@ function topbarHTML() {
     '</header>';
 }
 function tabsBarHTML() {
-  return '<nav class="tabs">' + TABS.map(function(t){
-    return '<button class="tab ' + (S.tab === t.id ? "active" : "") + '" data-action="tab:' + t.id + '">' + t.label + "</button>";
-  }).join("") + "</nav>";
+  return '<nav class="tabs">' + TABS.map(t =>
+    '<button class="tab ' + (S.tab === t.id ? "active" : "") + '" data-action="tab:' + t.id + '">' + t.label + "</button>"
+  ).join("") + "</nav>";
 }
 function footerHTML() {
   return '<footer class="foot">Créditos metodológicos: Jorge de Matos Casaca e Fernanda Queiróz e Silva (Embrapa).</footer>';
@@ -652,12 +633,12 @@ function tabGeralHTML() {
       '</div>' +
       '<h3>Espécies produzidas</h3>' +
       '<table class="tbl"><thead><tr><th>Espécie</th><th>Peso médio final (g)</th><th>Quantidade (kg)</th><th>Preço unitário (R$/kg)</th></tr></thead><tbody>' +
-      S.especies.map(function(e, i){
-        return '<tr><td>' + inputTxt(e.nome, "especies." + i + ".nome") + '</td>' +
+      S.especies.map((e, i) =>
+        '<tr><td>' + inputTxt(e.nome, "especies." + i + ".nome") + '</td>' +
           '<td>' + inputNum(e.pesoMedioFinal, "especies." + i + ".pesoMedioFinal") + '</td>' +
           '<td>' + inputNum(e.qtd, "especies." + i + ".qtd") + '</td>' +
-          '<td>' + inputNum(e.precoUnit, "especies." + i + ".precoUnit") + '</td></tr>';
-      }).join("") +
+          '<td>' + inputNum(e.precoUnit, "especies." + i + ".precoUnit") + '</td></tr>'
+      ).join("") +
       '</tbody></table>' +
       '<div class="grid2">' +
         '<label>Outras receitas (R$)<br>' + inputNum(S.outrasReceitas, "outrasReceitas") + '</label>' +
@@ -676,13 +657,13 @@ function tabLevantamentoHTML() {
       '<p class="hint">Insumos e serviços usados na formação do custo.</p>' +
       '<h3>Construção do viveiro / máquinas (horas)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
-      S.maquinas.map(function(m, i){
-        return '<tr><td>' + inputTxt(m.nome, "maquinas." + i + ".nome") + '</td>' +
+      S.maquinas.map((m, i) =>
+        '<tr><td>' + inputTxt(m.nome, "maquinas." + i + ".nome") + '</td>' +
           '<td>' + esc(m.unidade) + '</td>' +
           '<td>' + inputNum(m.qtd, "maquinas." + i + ".qtd") + '</td>' +
           '<td>' + inputNum(m.preco, "maquinas." + i + ".preco") + '</td>' +
-          '<td class="calc">' + outSpan("vmaq/" + i) + '</td></tr>';
-      }).join("") +
+          '<td class="calc">' + outSpan("vmaq/" + i) + '</td></tr>'
+      ).join("") +
       '</tbody></table>' +
       '<div class="subtotal">Subtotal máquinas: <b>' + outSpan("sub-maq") + '</b></div>' +
       '<h3>Vida útil da construção</h3>' +
@@ -690,28 +671,28 @@ function tabLevantamentoHTML() {
       '<div class="info">Depreciação anual (construção): <b>' + outSpan("dep-constr") + '</b></div>' +
       '<h3>Sistema de abastecimento, escoamento e geomembranas (materiais)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
-      S.materiais.map(function(m, i){
-        return '<tr><td>' + inputTxt(m.nome, "materiais." + i + ".nome") + '</td>' +
+      S.materiais.map((m, i) =>
+        '<tr><td>' + inputTxt(m.nome, "materiais." + i + ".nome") + '</td>' +
           '<td>' + esc(m.unidade) + '</td>' +
           '<td>' + inputNum(m.qtd, "materiais." + i + ".qtd") + '</td>' +
           '<td>' + inputNum(m.preco, "materiais." + i + ".preco") + '</td>' +
-          '<td class="calc">' + outSpan("vmat/" + i) + '</td></tr>';
-      }).join("") +
+          '<td class="calc">' + outSpan("vmat/" + i) + '</td></tr>'
+      ).join("") +
         '<tr><td>Mão-de-obra na construção / instalação</td><td>R$</td><td colspan="2">' + inputNum(S.maoDeObraConstrucao, "maoDeObraConstrucao") + '</td><td class="calc">' + outSpan("v-moc") + '</td></tr>' +
       '</tbody></table>' +
       '<div class="subtotal">Subtotal sistema: <b>' + outSpan("sub-mat") + '</b></div>' +
       '<label>Manutenção na construção (R$/ano):<br>' + inputNum(S.manutencaoConstrucao, "manutencaoConstrucao") + '</label>' +
       '<h3>Equipamentos (com aeradores, turbinas, etc.)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Qtde</th><th>Preço un. (R$)</th><th>Vida útil (anos)</th><th>Valor (R$)</th><th>Deprec./ano (R$)</th></tr></thead><tbody>' +
-      S.equipamentos.map(function(e, i){
-        return '<tr><td>' + inputTxt(e.nome, "equipamentos." + i + ".nome") + '</td>' +
+      S.equipamentos.map((e, i) =>
+        '<tr><td>' + inputTxt(e.nome, "equipamentos." + i + ".nome") + '</td>' +
           '<td>' + esc(e.unidade) + '</td>' +
           '<td>' + inputNum(e.qtd, "equipamentos." + i + ".qtd") + '</td>' +
           '<td>' + inputNum(e.preco, "equipamentos." + i + ".preco") + '</td>' +
           '<td>' + inputNum(e.vidaUtil, "equipamentos." + i + ".vidaUtil") + '</td>' +
           '<td class="calc">' + outSpan("veq/" + i) + '</td>' +
-          '<td class="calc">' + outSpan("deq/" + i) + '</td></tr>';
-      }).join("") +
+          '<td class="calc">' + outSpan("deq/" + i) + '</td></tr>'
+      ).join("") +
       '</tbody></table>' +
       '<div class="subtotal">Subtotal equipamentos: <b>' + outSpan("sub-eq") + '</b> · Depreciação anual: <b>' + outSpan("dep-eq") + '</b></div>' +
       '<label>Manutenção de equipamentos (R$/ano):<br>' + inputNum(S.manutencaoEquipamentos, "manutencaoEquipamentos") + '</label>' +
@@ -774,7 +755,7 @@ function tabOperacionalHTML() {
   return '<section class="fade"><h2>Custos operacionais</h2>' +
       '<h3>Custo Operacional Efetivo (COE)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Valor (R$)</th><th>%</th></tr></thead><tbody>' +
-        D.coeItens.map(function(c){ return '<tr><td>' + esc(c.nome) + '</td><td class="calc">' + fmtMoeda(c.valor) + '</td><td class="calc">' + (D.coeTotal > 0 ? fmt((c.valor * 100) / D.coeTotal, 1) + "%" : "—") + '</td></tr>'; }).join("") +
+        D.coeItens.map(c => '<tr><td>' + esc(c.nome) + '</td><td class="calc">' + fmtMoeda(c.valor) + '</td><td class="calc">' + (D.coeTotal > 0 ? fmt((c.valor * 100) / D.coeTotal, 1) + "%" : "—") + '</td></tr>').join("") +
         '<tr class="total"><td>COE Total</td><td class="calc">' + fmtMoeda(D.coeTotal) + '</td><td class="calc">100%</td></tr>' +
       '</tbody></table></section>';
 }
@@ -809,7 +790,7 @@ function precoSugerido(D) {
 }
 function precCenariosHTML(D) {
   const base = D.ind[D.markupModalidade === "cot" ? "cotKg" : "ctKg"];
-  return [10, 20, 30, 40, 50, 60, 80, 100].map(function(mk){
+  return [10, 20, 30, 40, 50, 60, 80, 100].map(mk => {
     const pr = base * (1 + mk / 100);
     const lu = pr - (D.ind.ctKg || 0);
     return '<tr><td>' + mk + '%</td><td class="calc">' + fmtMoeda(pr) + '</td><td class="calc">' + fmtMoeda(lu) + '</td></tr>';
@@ -819,14 +800,14 @@ function precCenariosHTML(D) {
 function tabBiometriasHTML() {
   return '<section class="fade"><h2>Biometrias</h2>' +
       '<table class="tbl"><thead><tr><th>#</th><th>Data</th><th>Peso médio (g)</th></tr></thead><tbody>' +
-      S.biometrias.map(function(b, i){ return '<tr><td>' + (i + 1) + '</td><td>' + inputDate(b.data, "biometrias." + i + ".data") + '</td><td>' + inputNum(b.pesoMedio, "biometrias." + i + ".pesoMedio") + '</td></tr>'; }).join("") +
+      S.biometrias.map((b, i) => '<tr><td>' + (i + 1) + '</td><td>' + inputDate(b.data, "biometrias." + i + ".data") + '</td><td>' + inputNum(b.pesoMedio, "biometrias." + i + ".pesoMedio") + '</td></tr>').join("") +
       '</tbody></table><div class="info" id="bio-info">Preencha as pesagens.</div></section>';
 }
 
 function tabAnalisesHTML() {
   return '<section class="fade"><h2>Análises de água</h2>' +
       '<table class="tbl"><thead><tr><th>Parâmetro</th><th>Data</th><th>Resultado</th></tr></thead><tbody>' +
-      S.analises.map(function(a, i){ return '<tr><td>' + esc(a.parametro) + '</td><td>' + inputDate(a.data, "analises." + i + ".data") + '</td><td>' + inputTxt(a.resultado, "analises." + i + ".resultado") + '</td></tr>'; }).join("") +
+      S.analises.map((a, i) => '<tr><td>' + esc(a.parametro) + '</td><td>' + inputDate(a.data, "analises." + i + ".data") + '</td><td>' + inputTxt(a.resultado, "analises." + i + ".resultado") + '</td></tr>').join("") +
       '</tbody></table></section>';
 }
 
@@ -876,7 +857,7 @@ function resolveOut(key, D, S) {
 
 function boot() {
   const saved = loadState();
-  S = saved? deepMerge(defaultState(), saved) : defaultState();
+  S = saved ? deepMerge(defaultState(), saved) : defaultState();
   if (!S.analises || !S.analises.length) S.analises = parametrosPadraoToAnalises();
   initAnaliseDates();
   render();
