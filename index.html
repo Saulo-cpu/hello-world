@@ -245,7 +245,7 @@ function defaultState() {
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 }
     ],
-    outrasReceitas: 0, dolar: 5.4,
+    outrasReceitas: 0, dolar: 5.5,
     percentuais: { jurosCapital: 0, jurosTerra: 0, producaoEstercoDia: 0, materiaSecaEsterco: 0 },
     quantitativos: {
       terraHa: 0, precoTerra: 0, horasMaquinaManual: 0, comprimentoAterro: 0, alturaAterro: 0, baseMaiorAterro: 0, baseMenorAterro: 0,
@@ -456,7 +456,7 @@ function cardHTML(label, valor, sub, cor) {
   return '<div class="card-ind"><div class="lbl">' + esc(label) + '</div><div class="val ' + (cor || "") + '">' + valor + "</div>" + (sub ? '<div class="sub">' + esc(sub) + "</div>" : "") + "</div>";
 }
 function esc(s) {
-  return String(s == null ? "" : s).replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&quot;").replace(/>/g, "&lt;").replace(/>/g, "&gt;");
 }
 function escAttr(s) {
   return String(s == null ? "" : s).replace(/&/g, "&").replace(/"/g, """).replace(/</g, "<").replace(/>/g, ">");
