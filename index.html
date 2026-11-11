@@ -442,20 +442,30 @@ function onFieldChange(ev) {
   updateLive();
 }
 
+
 function cardHTML(label, valor, sub, cor) {
   return '<div class="card-ind"><div class="lbl">' + esc(label) + '</div><div class="val ' + (cor || "") + '">' + valor + "</div>" + (sub ? '<div class="sub">' + esc(sub) + "</div>" : "") + "</div>";
+}
+
 function esc(s) {
   return String(s == null ? "" : s)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 }
+
 function escAttr(s) {
-  return String(s == null ? "" : s).replace(/&/g, "&").replace(/"/g, """).replace(/</g, "<").replace(/>/g, ">");
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
+
 function inputNum(value, path) {
   return '<input type="number" min="0" step="any" class="inp num" data-path="' + escAttr(path) + '" data-num="1" value="' + (Number(value) || 0) + '">';
 }
+
 function inputTxt(value, path) {
   return '<input type="text" class="inp" data-path="' + escAttr(path) + '" value="' + escAttr(value) + '">';
 }
