@@ -62,7 +62,6 @@ details.orient ul{margin:8px 0 0;padding-left:18px;font-size:.82rem;color:var(--
 .modal-card p{font-size:.86rem;color:var(--ink2);margin:0 0 16px}
 .modal-card button{margin-right:8px}
 
-/* Estilos de Impressão / PDF Geral */
 @media print{
   *{background:#fff!important;color:#111!important}
   .tabs,.toolbar{display:none!important}
@@ -85,15 +84,10 @@ details.orient ul{margin:8px 0 0;padding-left:18px;font-size:.82rem;color:var(--
 </style>
 </head>
 <body>
-<div id="root"></div>
+<div class="app-root" id="root"></div>
 <div class="modal" id="modal"><div class="modal-card"><h4 id="modal-title">Aviso</h4><p id="modal-text"></p><button class="btn-reset" id="modal-ok" style="border-color:var(--accent);color:var(--accent)">Fechar</button></div></div>
 <script>
-/* =====================================================================
-   PRECIFICADOR DE PISCICULTURA — método Embrapa (Casaca & Queiróz)
-   Arquivo único, 100% offline. Sem dependências externas.
-   ===================================================================== */
 "use strict";
-/* ===================== MOTOR DE CÁLCULO (puro) ===================== */
 const defValue = v => (v === "" || v === null || v === undefined ? 0 : Number(v));
 const seguranca = x => (typeof x === "number" && isFinite(x) && !isNaN(x) ? x : 0);
 const fmt = (v, d = 2) => {
@@ -225,9 +219,7 @@ function computeAll(S) {
     }
   };
 }
-/* ===================== FIM DO MOTOR ===================== */
 
-/* ===================== ESTADO DEFAULT ===================== */
 function hojeISO() {
   const d = new Date(); const off = d.getTimezoneOffset();
   return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10);
@@ -281,7 +273,7 @@ function defaultState() {
       { id: 9, nome: "Ferro / ferragens", unidade: "kg", qtd: 0, preco: 0 },
       { id: 10, nome: "Tanque Geomembrana (PEAD)", unidade: "m²", qtd: 0, preco: 0 },
       { id: 11, nome: "Selador / Solda para geomembrana", unidade: "Unidade", qtd: 0, preco: 0 },
-      { id: 12, nome: "Grade de proteção / anti-fuga para tanque", unidade: "Unidade", qtd: 0, preco: 0 },
+      { id: 12, nome: "Grade de protection / anti-fuga para tanque", unidade: "Unidade", qtd: 0, preco: 0 },
       { id: 13, nome: "Outros (materiais + projetos)", unidade: "Unidade", qtd: 0, preco: 0 }
     ],
     maoDeObraConstrucao: 0, manutencaoConstrucao: 0,
@@ -314,7 +306,6 @@ function defaultState() {
   };
 }
 
-/* ===================== PERSISTÊNCIA ===================== */
 const STORAGE_KEY = "precipisc_v1";
 let saveStatus = "";
 let S = defaultState();
@@ -333,7 +324,7 @@ function persist() {
     saveStatus = "Salvo automaticamente às " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
     updateSaveBadge();
   } catch (e) {
-    saveStatus = "Sem armazenamento interno neste navegador — use Salvar/Carregar arquivo.";
+    saveStatus = "Sem armazenamento interno — use Salvar/Carregar.";
   }
 }
 function loadState() {
@@ -342,7 +333,7 @@ function loadState() {
     if (!raw) return null;
     const st = JSON.parse(raw);
     if (st && typeof st === "object") return st;
-  } catch (e) { /* ignora */ }
+  } catch (e) {}
   return null;
 }
 function updateSaveBadge() {
@@ -369,7 +360,7 @@ function exportJSON() {
   a.href = url; a.download = "precificador-piscicultura-dados.json";
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
-  showToast("Arquivo de dados gerado. Guarde-o em local seguro.");
+  showToast("Arquivo de dados gerado com sucesso.");
 }
 function pickJSONFile(cb) {
   const inp = document.createElement("input");
@@ -382,14 +373,14 @@ function importJSONFile(file) {
   fr.onload = () => {
     try {
       const st = JSON.parse(fr.result);
-      if (!st || typeof st !== "object" || Array.isArray(st)) throw new Error("formato inesperado");
+      if (!st || typeof st !== "object" || Array.isArray(st)) throw new Error();
       S = deepMerge(defaultState(), st);
       if (!S.analises) S.analises = parametrosPadraoToAnalises();
       initAnaliseDates();
       persist(); render();
       showToast("Dados carregados com sucesso!");
     } catch (e) {
-      showToast("Não foi possível ler este arquivo. Selecione um JSON exportado pelo próprio precificador.", true);
+      showToast("Arquivo inválido.", true);
     }
   };
   fr.readAsText(file);
@@ -411,14 +402,10 @@ function initAnaliseDates() {
     S.analises = parametrosPadraoToAnalises();
     return;
   }
-  const d = cultivoDataHoje();
+  const d = (S.cultivo && S.cultivo.dataAnalise) ? S.cultivo.dataAnalise : hojeISO();
   S.analises.forEach(a => { if (!a.data && d) a.data = d; });
 }
-function cultivoDataHoje() {
-  return (S.cultivo && S.cultivo.dataAnalise) ? S.cultivo.dataAnalise : hojeISO();
-}
 
-/* ===================== NAVEGAÇÃO E ATUALIZAÇÃO LIVE ===================== */
 function setPath(obj, path, val) {
   const parts = String(path).split(".");
   let cur = obj;
@@ -451,15 +438,14 @@ function onFieldChange(ev) {
   updateLive();
 }
 
-/* ===================== RENDER: ESTRUTURA ===================== */
 function cardHTML(label, valor, sub, cor) {
   return '<div class="card-ind"><div class="lbl">' + esc(label) + '</div><div class="val ' + (cor || "") + '">' + valor + "</div>" + (sub ? '<div class="sub">' + esc(sub) + "</div>" : "") + "</div>";
 }
 function esc(s) {
-  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return String(s == null ? "" : s).replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
 }
 function escAttr(s) {
-  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return String(s == null ? "" : s).replace(/&/g, "&").replace(/"/g, """).replace(/</g, "<").replace(/>/g, ">");
 }
 function inputNum(value, path) {
   return '<input type="number" min="0" step="any" class="inp num" data-path="' + escAttr(path) + '" data-num="1" value="' + (Number(value) || 0) + '">';
@@ -508,36 +494,23 @@ const TABS = [
   { id: "analises", label: "⑧ Análises de água" }
 ];
 
-let inputDebounceId = null;
-document.addEventListener("input", function (ev) {
-  onFieldChange(ev);
-  const el = ev.target.closest("[data-live-refresh='1']");
-  if (el) {
-    clearTimeout(inputDebounceId);
-    inputDebounceId = setTimeout(rebuildActiveTab, 350);
-  }
-}, true);
+document.addEventListener("input", onFieldChange, true);
 document.addEventListener("change", onFieldChange, true);
-function rebuildActiveTab() { render(); }
 document.addEventListener("click", function (ev) {
   const btn = ev.target.closest("[data-action]");
   if (!btn) return;
   const action = btn.getAttribute("data-action");
   if (action.indexOf("tab:") === 0) { switchTab(action.slice(4)); return; }
   if (action === "print") { printAllTabs(); return; }
-  if (action === "reset") { showConfirm("Limpar todos os dados digitados?", "Isso apaga os dados salvos neste aparelho/navegador e restaura o formulário em branco. Recomendamos salvar uma cópia antes.", "Sim, limpar", "Cancelar", function (ok) { if (ok) { try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} window.location.reload(); } }); return; }
+  if (action === "reset") { showConfirm("Limpar todos os dados?", "Isso apaga os dados salvos neste navegador.", "Sim, limpar", "Cancelar", function (ok) { if (ok) { try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} window.location.reload(); } }); return; }
   if (action === "export") { exportJSON(); return; }
   if (action === "import") { pickJSONFile(importJSONFile); return; }
 });
 
-/* ===================== FUNÇÃO IMPRIMIR TODAS AS ABAS / RELATÓRIO PDF COMPLETO ===================== */
 function printAllTabs() {
   const currentTab = S.tab;
   const root = document.getElementById("root");
-  
-  // Renderiza todas as 8 etapas em sequência com quebra de página
   let printHtml = topbarHTML() + '<main class="content">';
-  
   TABS.forEach((t, idx) => {
     printHtml += '<div class="' + (idx > 0 ? "print-page-break" : "") + '">';
     switch (t.id) {
@@ -552,15 +525,11 @@ function printAllTabs() {
     }
     printHtml += '</div>';
   });
-  
   printHtml += '</main>' + footerHTML();
   root.innerHTML = printHtml;
   updateLive();
-
-  // Executa a janela de impressão nativa
   setTimeout(() => {
     window.print();
-    // Restaura a aba selecionada anteriormente após a impressão
     S.tab = currentTab;
     render();
   }, 300);
@@ -571,8 +540,7 @@ function showConfirm(title, text, okLabel, cancelLabel, cb) {
   const m = document.getElementById("modal");
   document.getElementById("modal-title").textContent = title;
   document.getElementById("modal-text").textContent = text;
-  const okB = document.getElementById("modal-ok");
-  okB.textContent = okLabel;
+  document.getElementById("modal-ok").textContent = okLabel;
   m.classList.add("show");
   confirmHandler = function (ok) {
     m.classList.remove("show");
@@ -594,22 +562,18 @@ document.addEventListener("click", function (ev) {
   card.insertBefore(cancel, document.getElementById("modal-ok"));
 })();
 
-document.addEventListener("keydown", function (ev) {
-  if ((ev.ctrlKey || ev.metaKey) && ev.key === "s") { ev.preventDefault(); exportJSON(); }
-});
-
 function topbarHTML() {
   return '<header class="topbar">' +
       '<div class="brand"><span class="logo">🐟</span><div>' +
         '<div class="brand-title">Precificador de Piscicultura</div>' +
-        '<div class="brand-sub">Modelo Embrapa (Casaca &amp; Queiróz) — todos os cálculos conectados entre as etapas</div>' +
+        '<div class="brand-sub">Modelo Embrapa (Casaca & Queiróz)</div>' +
       '</div></div>' +
       '<div class="toolbar">' +
         '<span class="save-badge" id="save-badge"></span>' +
-        '<button class="btn-reset" data-action="export" title="Baixar um arquivo JSON com seus dados">💾 Salvar arquivo</button>' +
-        '<button class="btn-reset" data-action="import" title="Carregar um arquivo JSON salvo anteriormente">📂 Carregar arquivo</button>' +
-        '<button class="btn-reset" data-action="print" title="Imprimir ou salvar em PDF o relatório completo">🖨️ Relatório Completo PDF</button>' +
-        '<button class="btn-reset" data-action="reset" title="Limpar todos os dados">↺ Reiniciar</button>' +
+        '<button class="btn-reset" data-action="export">💾 Salvar arquivo</button>' +
+        '<button class="btn-reset" data-action="import">📂 Carregar arquivo</button>' +
+        '<button class="btn-reset" data-action="print">🖨️ Relatório Completo PDF</button>' +
+        '<button class="btn-reset" data-action="reset">↺ Reiniciar</button>' +
       '</div>' +
     '</header>';
 }
@@ -619,17 +583,12 @@ function tabsBarHTML() {
   ).join("") + "</nav>";
 }
 function footerHTML() {
-  return '<footer class="foot">Créditos metodológicos: Jorge de Matos Casaca e Fernanda Queiróz e Silva (planilhas Embrapa de custo de produção de peixes). ' +
-    'Arquivo offline — seus dados ficam neste dispositivo, salvos automaticamente nesta página.</footer>';
+  return '<footer class="foot">Créditos metodológicos: Jorge de Matos Casaca e Fernanda Queiróz e Silva (Embrapa).</footer>';
 }
 function orientacoesHTML() {
   return '<details class="orient"><summary>Orientações de uso (metodologia Embrapa)</summary><ul>' +
-    "<li>Preencha os dados nas etapas ①/② (e depois ⑦/⑧): as demais etapas apenas exibem os resultados das fórmulas.</li>" +
-    "<li>A planilha destina-se a <b>viveiros escavados e tanques revestidos/geomembrana</b>; calcule o custo <b>por cultivo e por viveiro</b>.</li>" +
-    "<li>Serve para monocultivo ou policultivo — mas a etapa ⑦ Biometrias avalia apenas a <b>espécie principal</b> (a primeira da lista).</li>" +
-    "<li>Atualize os valores de despesas e receitas para a <b>data da análise do custo de produção</b>, evitando o efeito da inflação no período.</li>" +
-    "<li>Depreciações de bens e equipamentos devem ser rateadas proporcionalmente ao uso no viveiro avaliado.</li>" +
-    "<li>Dica: use 💾 Salvar arquivo antes de grandes alterações; o backup fica em um arquivo JSON seu.</li>" +
+    "<li>Preencha os dados nas etapas ①/② (e depois ⑦/⑧): as demais etapas exibem os resultados das fórmulas.</li>" +
+    "<li>Projetado para viveiros escavados e tanques revestidos/geomembrana.</li>" +
   "</ul></details>";
 }
 function render() {
@@ -654,9 +613,8 @@ function render() {
 }
 
 function tabGeralHTML() {
-  return '<section class="fade">' +
-      '<h2>Dados gerais do cultivo</h2>' +
-      '<p class="hint">Informações básicas do empreendimento e do ciclo. Estas alimentam automaticamente todas as demais etapas.</p>' +
+  return '<section class="fade"><h2>Dados gerais do cultivo</h2>' +
+      '<p class="hint">Informações básicas do empreendimento e ciclo.</p>' +
       '<div class="grid2">' +
         '<label>Nome do proprietário<br>' + inputTxt(S.cultivo.produtor, "cultivo.produtor") + '</label>' +
         '<label>Localidade<br>' + inputTxt(S.cultivo.localidade, "cultivo.localidade") + '</label>' +
@@ -670,7 +628,6 @@ function tabGeralHTML() {
         '<div class="infobox">Período de cultivo calculado: <b>' + outSpan("periodo") + '</b></div>' +
       '</div>' +
       '<h3>Espécies produzidas</h3>' +
-      '<p class="hint">Lançamento por espécie — quantidade total produzida e preço médio unitário obtido na venda.</p>' +
       '<table class="tbl"><thead><tr><th>Espécie</th><th>Peso médio final (g)</th><th>Quantidade (kg)</th><th>Preço unitário (R$/kg)</th></tr></thead><tbody>' +
       S.especies.map((e, i) =>
         '<tr><td>' + inputTxt(e.nome, "especies." + i + ".nome") + '</td>' +
@@ -688,16 +645,13 @@ function tabGeralHTML() {
         '<span>Receita bruta: <b>' + outSpan("receita-bruta") + '</b></span>' +
         '<span>Preço médio de venda: <b>' + outSpan("preco-medio-venda") + '</b></span>' +
       '</div>' +
-      orientacoesHTML() +
-    '</section>';
+      orientacoesHTML() + '</section>';
 }
 
 function tabLevantamentoHTML() {
-  return '<section class="fade">' +
-      '<h2>Levantamento de dados</h2>' +
-      '<p class="hint">Insumos e serviços usados na formação do custo. Valores lançados aqui aparecem automaticamente nas etapas ③ e ④.</p>' +
-
-      '<h3>Construção do viveiro / infraestrutura — máquinas (horas)</h3>' +
+  return '<section class="fade"><h2>Levantamento de dados</h2>' +
+      '<p class="hint">Insumos e serviços usados na formação do custo.</p>' +
+      '<h3>Construção do viveiro / máquinas (horas)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
       S.maquinas.map((m, i) =>
         '<tr><td>' + inputTxt(m.nome, "maquinas." + i + ".nome") + '</td>' +
@@ -708,12 +662,10 @@ function tabLevantamentoHTML() {
       ).join("") +
       '</tbody></table>' +
       '<div class="subtotal">Subtotal máquinas: <b>' + outSpan("sub-maq") + '</b></div>' +
-
-      '<h3>Vida útil da construção / infraestrutura</h3>' +
+      '<h3>Vida útil da construção</h3>' +
       '<label>Anos de vida útil:<br>' + inputNum(S.vidaUtilConstrucao, "vidaUtilConstrucao") + '</label>' +
-      '<div class="info">Depreciação anual (construção) = subtotal ÷ vida útil × 0,9 → <b>' + outSpan("dep-constr") + '</b></div>' +
-
-      '<h3>Sistema de abastecimento, escoamento e reservatórios (materiais / geomembrana)</h3>' +
+      '<div class="info">Depreciação anual (construção): <b>' + outSpan("dep-constr") + '</b></div>' +
+      '<h3>Sistema de abastecimento, escoamento e geomembranas (materiais)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
       S.materiais.map((m, i) =>
         '<tr><td>' + inputTxt(m.nome, "materiais." + i + ".nome") + '</td>' +
@@ -722,14 +674,11 @@ function tabLevantamentoHTML() {
           '<td>' + inputNum(m.preco, "materiais." + i + ".preco") + '</td>' +
           '<td class="calc">' + outSpan("vmat/" + i) + '</td></tr>'
       ).join("") +
-        '<tr><td>Mão-de-obra na construção / instalação</td><td>R$</td>' +
-          '<td colspan="2">' + inputNum(S.maoDeObraConstrucao, "maoDeObraConstrucao") + '</td>' +
-          '<td class="calc">' + outSpan("v-moc") + '</td></tr>' +
+        '<tr><td>Mão-de-obra na construção / instalação</td><td>R$</td><td colspan="2">' + inputNum(S.maoDeObraConstrucao, "maoDeObraConstrucao") + '</td><td class="calc">' + outSpan("v-moc") + '</td></tr>' +
       '</tbody></table>' +
-      '<div class="subtotal">Subtotal sistema (com mão-de-obra): <b>' + outSpan("sub-mat") + '</b></div>' +
-      '<label>Manutenção na construção / estrutura (R$/ano):<br>' + inputNum(S.manutencaoConstrucao, "manutencaoConstrucao") + '</label>' +
-
-      '<h3>Equipamentos (com vida útil individual)</h3>' +
+      '<div class="subtotal">Subtotal sistema: <b>' + outSpan("sub-mat") + '</b></div>' +
+      '<label>Manutenção na construção (R$/ano):<br>' + inputNum(S.manutencaoConstrucao, "manutencaoConstrucao") + '</label>' +
+      '<h3>Equipamentos (com aeradores, turbinas, etc.)</h3>' +
       '<table class="tbl"><thead><tr><th>Item</th><th>Unid.</th><th>Qtde</th><th>Preço un. (R$)</th><th>Vida útil (anos)</th><th>Valor (R$)</th><th>Deprec./ano (R$)</th></tr></thead><tbody>' +
       S.equipamentos.map((e, i) =>
         '<tr><td>' + inputTxt(e.nome, "equipamentos." + i + ".nome") + '</td>' +
@@ -743,21 +692,18 @@ function tabLevantamentoHTML() {
       '</tbody></table>' +
       '<div class="subtotal">Subtotal equipamentos: <b>' + outSpan("sub-eq") + '</b> · Depreciação anual: <b>' + outSpan("dep-eq") + '</b></div>' +
       '<label>Manutenção de equipamentos (R$/ano):<br>' + inputNum(S.manutencaoEquipamentos, "manutencaoEquipamentos") + '</label>' +
-
       '<h3>Parâmetros financeiros</h3>' +
       '<div class="grid2">' +
-        '<label>Juros sobre capital mobilizado (% ao ano)<br>' + inputNum(S.percentuais.jurosCapital, "percentuais.jurosCapital") + '</label>' +
+        '<label>Juros capital (% ao ano)<br>' + inputNum(S.percentuais.jurosCapital, "percentuais.jurosCapital") + '</label>' +
         '<label>Terra (ha)<br>' + inputNum(S.quantitativos.terraHa, "quantitativos.terraHa") + '</label>' +
         '<label>Valor da terra (R$/ha)<br>' + inputNum(S.quantitativos.precoTerra, "quantitativos.precoTerra") + '</label>' +
         '<label>Juros sobre a terra (% ao ano)<br>' + inputNum(S.percentuais.jurosTerra, "percentuais.jurosTerra") + '</label>' +
       '</div>' +
-
       '<h3>Custos operacionais do cultivo</h3>' +
-      '<p class="hint">Insumos e despesas recorrentes do ciclo de engorda. Linhas calculadas automaticamente são marcadas no valor final.</p>' +
       '<table class="tbl" id="op-tbl"><thead><tr><th>Item</th><th>Unidade</th><th>Quantidade</th><th>Preço unitário (R$)</th><th>Valor (R$)</th></tr></thead><tbody>' +
         opRow("Alevinos / Juvenis", "Unidade", "quantitativos.alevinosQtd", "quantitativos.alevinosPrecoUnit", "out-alev") +
         '<tr><td>Peso médio inicial (g)</td><td>—</td><td colspan="2">' + inputNum(S.quantitativos.alevinosPesoMedio, "quantitativos.alevinosPesoMedio") + '</td><td class="calc">—</td></tr>' +
-        opRow("Mão de obra cultivo + encargos", "hora", "quantitativos.maoDeObraCultivoHoras", "quantitativos.maoDeObraCultivoValor", "out-mob") +
+        opRow("Mão de obra cultivo", "hora", "quantitativos.maoDeObraCultivoHoras", "quantitativos.maoDeObraCultivoValor", "out-mob") +
         opRow("Ração 1", "kg", "quantitativos.racao1Qtd", "quantitativos.racao1Preco", "out-r1") +
         opRow("Ração 2", "kg", "quantitativos.racao2Qtd", "quantitativos.racao2Preco", "out-r2") +
         opRow("Fertilizante orgânico 1", "t", "quantitativos.fertOrg1Qtd", "quantitativos.fertOrg1Preco", "out-fo1") +
@@ -771,30 +717,12 @@ function tabLevantamentoHTML() {
         opRow("Análise da água", "Unidade", "quantitativos.analiseAguaQtd", "quantitativos.analiseAguaPreco", "out-anagua") +
         opRow("Transporte", "km", "quantitativos.transporteQtd", "quantitativos.transportePreco", "out-transp") +
         opRow("Assistência técnica", "Visita", "quantitativos.assistenciaQtd", "quantitativos.assistenciaPreco", "out-assist") +
-        opRowSimple("Gastos administrativos e financeiros", "quantitativos.gastosAdm", "out-gadm") +
-        opRowSimple("Medicamentos e produtos químicos / probióticos", "quantitativos.medicamentos", "out-medic") +
-        opRowSimple("Outros custos operacionais", "quantitativos.outrosOperacionais", "out-outros") +
+        opRowSimple("Gastos administrativos", "quantitativos.gastosAdm", "out-gadm") +
+        opRowSimple("Medicamentos e químicos", "quantitativos.medicamentos", "out-medic") +
+        opRowSimple("Outros operacionais", "quantitativos.outrosOperacionais", "out-outros") +
         opRowSimple("Arrendamento", "quantitativos.arrendamento", "out-arrend") +
-        opRowSimple("Pró-labore (retirada)", "quantitativos.proLaboreSalario", "out-prolab") +
-      '</tbody></table>' +
-
-      '<h3>Auxiliares de cálculo (opcionais)</h3>' +
-      '<p class="hint">Estes campos alimentam apenas os cálculos automáticos de esterco e horas-máquina via movimentação de terra.</p>' +
-      '<div class="grid2">' +
-        '<label>Nº de animais para produção de esterco<br>' + inputNum(S.quantitativos.animais, "quantitativos.animais") + '</label>' +
-        '<label>Peso médio dos animais (kg)<br>' + inputNum(S.quantitativos.pesoAnimais, "quantitativos.pesoAnimais") + '</label>' +
-        '<label>Produção de esterco (% do peso vivo/dia)<br>' + inputNum(S.percentuais.producaoEstercoDia, "percentuais.producaoEstercoDia") + '</label>' +
-        '<label>Matéria seca do esterco (%)<br>' + inputNum(S.percentuais.materiaSecaEsterco, "percentuais.materiaSecaEsterco") + '</label>' +
-        '<label>Esterco produzido (t)<br>' + inputNum(S.quantitativos.estercoProduzido, "quantitativos.estercoProduzido") + '</label>' +
-        '<label>Horas/máquina informadas manualmente<br>' + inputNum(S.quantitativos.horasMaquinaManual, "quantitativos.horasMaquinaManual") + '</label>' +
-        '<label>Comprimento do aterro (m)<br>' + inputNum(S.quantitativos.comprimentoAterro, "quantitativos.comprimentoAterro") + '</label>' +
-        '<label>Altura do aterro (m)<br>' + inputNum(S.quantitativos.alturaAterro, "quantitativos.alturaAterro") + '</label>' +
-        '<label>Base maior do aterro (m)<br>' + inputNum(S.quantitativos.baseMaiorAterro, "quantitativos.baseMaiorAterro") + '</label>' +
-        '<label>Base menor do aterro (m)<br>' + inputNum(S.quantitativos.baseMenorAterro, "quantitativos.baseMenorAterro") + '</label>' +
-      '</div>' +
-      '<div class="info">Volume de aterro calculado: <b>' + outSpan("vol-aterro") + ' m³</b> · Horas-máquina estimadas (÷30): <b>' + outSpan("horas-maq") + '</b> · Esterco estimado: <b>' + outSpan("esterco-ton") + ' t</b></div>' +
-      '<p class="note">Observações metodológicas (Embrapa): uso indicado para viveiros escavados e revestidos; calcular sempre o custo por cultivo e por viveiro/tanque; valores em R$ atualizados para a data da análise; ratear depreciações conforme o uso no viveiro avaliado.</p>' +
-    '</section>';
+        opRowSimple("Pró-labore", "quantitativos.proLaboreSalario", "out-prolab") +
+      '</tbody></table></section>';
 }
 function opRow(label, unidade, pathQtd, pathPreco, outKey) {
   return '<tr><td>' + esc(label) + '</td><td>' + esc(unidade) + '</td>' +
@@ -809,198 +737,74 @@ function opRowSimple(label, pathValor, outKey) {
 
 function tabImplantacaoHTML() {
   const D = computeAll(S).D;
-  return '<section class="fade">' +
-      '<h2>Custo de implantação do viveiro / infraestrutura</h2>' +
-      '<p class="hint">Preenchido automaticamente a partir do levantamento (etapa ②).</p>' +
+  return '<section class="fade"><h2>Custo de implantação</h2>' +
       '<table class="tbl"><thead><tr><th>Grupo</th><th>Valor (R$)</th><th>Depreciação anual (R$)</th></tr></thead><tbody>' +
-        '<tr><td>Construção do viveiro / terraplanagem (máquinas)</td><td class="calc">' + fmtMoeda(D.totalMaquinas) + '</td><td class="calc">' + fmtMoeda(D.depConstrucao) + '</td></tr>' +
-        '<tr><td>Abastecimento, escoamento, tanques e geomembranas (materiais + M.O.)</td><td class="calc">' + fmtMoeda(D.totalMateriais) + '</td><td class="calc">' + fmtMoeda(D.depAbastecimento) + '</td></tr>' +
-        '<tr><td>Equipamentos (aeradores, bombas, etc.)</td><td class="calc">' + fmtMoeda(D.valorEquipamentos) + '</td><td class="calc">' + fmtMoeda(D.deprecEquip) + '</td></tr>' +
+        '<tr><td>Construção (máquinas)</td><td class="calc">' + fmtMoeda(D.totalMaquinas) + '</td><td class="calc">' + fmtMoeda(D.depConstrucao) + '</td></tr>' +
+        '<tr><td>Abastecimento e geomembranas</td><td class="calc">' + fmtMoeda(D.totalMateriais) + '</td><td class="calc">' + fmtMoeda(D.depAbastecimento) + '</td></tr>' +
+        '<tr><td>Equipamentos</td><td class="calc">' + fmtMoeda(D.valorEquipamentos) + '</td><td class="calc">' + fmtMoeda(D.deprecEquip) + '</td></tr>' +
         '<tr class="total"><td>Custo total da infraestrutura</td><td class="calc">' + fmtMoeda(D.custoTotalViveiro) + '</td><td class="calc">' + fmtMoeda(D.depreciacaoAnualTotal) + '</td></tr>' +
-      '</tbody></table>' +
-      '<div class="cards">' +
-        cardHTML("Custo de implantação total", fmtMoeda(D.custoTotalViveiro), null, "blue") +
-        cardHTML("Depreciação anual total", fmtMoeda(D.depreciacaoAnualTotal), "entra no COT", "orange") +
-      '</div>' +
-      '<p class="note">Observação metodológica: conforme a planilha original, a depreciação das máquinas e da infraestrutura considera 90% do valor residual; equipamentos depreciam linearmente pela vida útil.</p>' +
-    '</section>';
+      '</tbody></table></section>';
 }
+
 function tabOperacionalHTML() {
   const D = computeAll(S).D;
-  return '<section class="fade">' +
-      '<h2>Custos operacionais — COE, COT e CT</h2>' +
-      '<p class="hint">Os valores abaixo chegam automaticamente do levantamento. Alterações nos insumos refletem aqui ao navegar entre as etapas.</p>' +
+  return '<section class="fade"><h2>Custos operacionais</h2>' +
       '<h3>Custo Operacional Efetivo (COE)</h3>' +
-      '<table class="tbl"><thead><tr><th>Item</th><th>Valor (R$)</th><th>% do COE</th></tr></thead><tbody id="coe-tbody">' +
-        coeRowsHTML(D) +
-      '</tbody></table>' +
-      '<h3>Custo Operacional Total (COT)</h3>' +
-      '<table class="tbl"><thead><tr><th>Componente</th><th>Valor (R$)</th></tr></thead><tbody>' +
-        '<tr><td>COE Total</td><td class="calc">' + fmtMoeda(D.coeTotal) + '</td></tr>' +
-        '<tr><td>Pró-labore</td><td class="calc">' + fmtMoeda(defValue(S.quantitativos.proLaboreSalario)) + '</td></tr>' +
-        '<tr><td>Depreciação anual</td><td class="calc">' + fmtMoeda(D.depreciacaoAnualTotal) + '</td></tr>' +
-        '<tr class="total"><td>COT Total</td><td class="calc">' + fmtMoeda(D.cotTotal) + '</td></tr>' +
-      '</tbody></table>' +
-      '<h3>Custo de oportunidade e Custo Total</h3>' +
-      '<table class="tbl"><thead><tr><th>Componente</th><th>Valor (R$)</th></tr></thead><tbody>' +
-        '<tr><td>Juros sobre capital mobilizado</td><td class="calc">' + fmtMoeda(D.jurosCapital) + '</td></tr>' +
-        '<tr><td>Juros sobre a terra</td><td class="calc">' + fmtMoeda(D.jurosTerra) + '</td></tr>' +
-        '<tr><td>Custo de oportunidade</td><td class="calc">' + fmtMoeda(D.custoOportunidade) + '</td></tr>' +
-        '<tr class="total"><td>Custo Total (CT) = COT + Custo de Oportunidade</td><td class="calc">' + fmtMoeda(D.custoTotal) + '</td></tr>' +
-      '</tbody></table>' +
-      '<div class="cards">' +
-        cardHTML("COE total", fmtMoeda(D.coeTotal), fmtMoeda(D.ind.coeKg) + "/kg", "blue") +
-        cardHTML("COT total", fmtMoeda(D.cotTotal), fmtMoeda(D.ind.cotKg) + "/kg", "purple") +
-        cardHTML("Custo Total (CT)", fmtMoeda(D.custoTotal), fmtMoeda(D.ind.ctKg) + "/kg", "red") +
-      '</div>' +
-    '</section>';
+      '<table class="tbl"><thead><tr><th>Item</th><th>Valor (R$)</th><th>%</th></tr></thead><tbody>' +
+        D.coeItens.map(c => '<tr><td>' + esc(c.nome) + '</td><td class="calc">' + fmtMoeda(c.valor) + '</td><td class="calc">' + (D.coeTotal > 0 ? fmt((c.valor * 100) / D.coeTotal, 1) + "%" : "—") + '</td></tr>').join("") +
+        '<tr class="total"><td>COE Total</td><td class="calc">' + fmtMoeda(D.coeTotal) + '</td><td class="calc">100%</td></tr>' +
+      '</tbody></table></section>';
 }
-function coeRowsHTML(D) {
-  return D.coeItens.map(c =>
-    '<tr><td>' + esc(c.nome) + '</td>' +
-      '<td class="calc">' + fmtMoeda(c.valor) + '</td>' +
-      '<td class="calc">' + (D.coeTotal > 0 ? fmt((c.valor * 100) / D.coeTotal, 1) + "%" : "—") + '</td></tr>'
-  ).join("") +
-    '<tr class="total"><td>COE Total</td><td class="calc">' + fmtMoeda(D.coeTotal) + '</td><td class="calc">100%</td></tr>';
-}
+
 function tabIndicadoresHTML() {
-  const D = computeAll(S).D;
-  const ind = D.ind;
-  const dolar = D.dolar || 0;
-  function cell(row) {
-    const un = row[1];
-    let v;
-    if (un === "%") v = fmt(row[2], 1) + " %";
-    else if (un.indexOf("R$") !== -1) v = fmtMoeda(row[2]);
-    else v = fmt(row[2], 2);
-    return v;
-  }
-  const rows = [
-    ["Receita Bruta (RB)", "R$", ind.rb],
-    ["Receita Bruta (RB)/kg", "R$/kg", ind.rbKg],
-    ["Custo Operacional Efetivo (COE)", "R$", ind.coe],
-    ["COE/kg", "R$/kg", ind.coeKg],
-    ["Custo Operacional Total (COT)", "R$", ind.cot],
-    ["COT/kg", "R$/kg", ind.cotKg],
-    ["Custo Total (CT)", "R$", ind.ct],
-    ["CT/kg", "R$/kg", ind.ctKg],
-    ["Margem Bruta (MB)", "R$", ind.rb - ind.coe],
-    ["Margem Bruta Unitária (MBU)", "R$/kg", ind.mbu],
-    ["Margem Bruta (%)", "%", ind.mb],
-    ["Margem Líquida (ML)", "R$", ind.rb - ind.cot],
-    ["Margem Líquida Unitária (MLU)", "R$/kg", ind.mlu],
-    ["Margem Líquida / Índice de Lucratividade", "%", ind.ml],
-    ["Produção de Nivelamento (COE)", "kg", ind.nivelamentoCOE],
-    ["Produção de Nivelamento (COT)", "kg", ind.nivelamentoCOT],
-    ["Preço de Nivelamento (COE)", "R$/kg", ind.prelonCOE],
-    ["Preço de Nivelamento (COT)", "R$/kg", ind.prelonCOT],
-    ["Ponto de Equilíbrio Operacional", "kg", ind.pontoEquilibrioOp],
-    ["Custo da ração/kg produzido", "R$/kg", ind.custoRacaoKg],
-    ["Custo do fertilizante/kg produzido", "R$/kg", ind.custoFertKg],
-    ["Custo da mão de obra/kg produzido", "R$/kg", ind.custoMaoObraKg],
-    ["Período de Recuperação do Capital", "ciclos", ind.recuperacaoCapital],
-    ["Custo de implantação do viveiro", "R$", ind.custoImplantacao]
-  ];
-  return '<section class="fade">' +
-      '<h2>Indicadores técnicos e econômicos</h2>' +
-      '<p class="hint">Síntese do desempenho do cultivo — calculada em tempo real a partir de todas as etapas anteriores.</p>' +
+  const D = computeAll(S).D; const ind = D.ind;
+  return '<section class="fade"><h2>Indicadores</h2>' +
       '<div class="cards">' +
         cardHTML("Receita Bruta", fmtMoeda(ind.rb), fmtMoeda(ind.rbKg) + "/kg", "green") +
         cardHTML("Margem Bruta Unitária", fmtMoeda(ind.mbu), "MB " + fmt(ind.mb, 1) + "%", "blue") +
         cardHTML("Margem Líquida Unitária", fmtMoeda(ind.mlu), "ML " + fmt(ind.ml, 1) + "%", "purple") +
         cardHTML("Produtividade", fmt(ind.produtividade, 0) + " kg/ha/ano", null, "orange") +
-        cardHTML("Conversão alimentar", fmt(ind.conversaoAlimentar, 2) + " kg ração/kg", null, "orange") +
-        cardHTML("Sobrevivência", fmt(ind.sobrevivencia, 1) + "%", null, "orange") +
-        cardHTML("Taxa de crescimento", fmt(ind.taxaCrescimento, 1) + " g/dia", null, "orange") +
-        cardHTML("Preço de nivelamento (COT)", fmtMoeda(ind.prelonCOT), "preço mínimo p/ cobrir COT", "red") +
-      '</div>' +
-      '<h3>Tabela completa</h3>' +
-      '<p class="note">Valores em US$ convertidos pela cotação informada na etapa ① (Dados gerais).</p>' +
-      '<table class="tbl"><thead><tr><th>Indicador</th><th>Unidade</th><th>Resultado</th>' + (dolar > 0 ? '<th>US$</th>' : '') + '</tr></thead><tbody>' +
-      rows.map(row =>
-        '<tr><td>' + esc(row[0]) + '</td><td>' + esc(row[1]) + '</td><td class="calc">' + cell(row) + '</td>' +
-          (dolar > 0 ? '<td class="calc">' + (row[1].indexOf("R$") !== -1 && typeof row[2] === "number" ? "US$ " + fmt(row[2] / dolar, 2) : "—") + '</td>' : '') +
-        '</tr>'
-      ).join("") +
-      '</tbody></table>' +
-    '</section>';
+      '</div></section>';
 }
 
 function tabPrecificacaoHTML() {
   const D = computeAll(S).D;
-  return '<section class="fade">' +
-      '<h2>Precificação do produto</h2>' +
-      '<p class="hint">Aplicação direta sobre os indicadores: use o custo como base e aplique sua margem desejada.</p>' +
+  return '<section class="fade"><h2>Precificação</h2>' +
       '<div class="grid2">' +
-        '<label>Base de cálculo' + selectHTML(S.markupModalidade, "markupModalidade", [
-          { v: "cot", l: "Custo Operacional Total (COT)/kg" },
-          { v: "ct", l: "Custo Total (CT)/kg" }
-        ]) + '</label>' +
+        '<label>Base de cálculo' + selectHTML(S.markupModalidade, "markupModalidade", [{ v: "cot", l: "COT/kg" }, { v: "ct", l: "CT/kg" }]) + '</label>' +
         '<label>Markup desejado (%)<br>' + inputNum(S.margemMarkup, "margemMarkup") + '</label>' +
       '</div>' +
       '<div class="cards">' +
-        cardHTML("Custo base (" + S.markupModalidade.toUpperCase() + ")", fmtMoeda(D.ind[S.markupModalidade === "cot" ? "cotKg" : "ctKg"]), "por kg", "blue") +
-        cardHTML("Preço sugerido", fmtMoeda(precoSugerido(D)), "markup de " + fmt(D.margemMarkup, 0) + "%", "green") +
-        cardHTML("Lucro unitário", fmtMoeda(lucroUnico(D)), "por kg", "purple") +
+        cardHTML("Preço sugerido", fmtMoeda(precoSugerido(D)), "markup " + fmt(S.margemMarkup, 0) + "%", "green") +
       '</div>' +
-      '<table class="tbl"><thead><tr><th>Cenário de markup</th><th>Preço (R$/kg)</th><th>Lucro líquido estimado</th></tr></thead>' +
-        '<tbody id="prec-cenarios">' + precCenariosHTML(D) + '</tbody></table>' +
-      '<p class="note">O lucro líquido estimado considera preço − custo base (COE/COT/CT escolhido). Margens são referências gerenciais: valide sempre com o mercado local.</p>' +
-    '</section>';
+      '<table class="tbl"><thead><tr><th>Cenário</th><th>Preço (R$/kg)</th><th>Lucro líquido</th></tr></thead>' +
+      '<tbody id="prec-cenarios">' + precCenariosHTML(D) + '</tbody></table></section>';
 }
 function precoSugerido(D) {
   const base = D.ind[D.markupModalidade === "cot" ? "cotKg" : "ctKg"];
   return base > 0 ? base * (1 + D.margemMarkup / 100) : 0;
-}
-function lucroUnico(D) {
-  const base = D.ind[D.markupModalidade === "cot" ? "cotKg" : "ctKg"];
-  const pr = precoSugerido(D);
-  return pr > base ? pr - base : 0;
 }
 function precCenariosHTML(D) {
   const base = D.ind[D.markupModalidade === "cot" ? "cotKg" : "ctKg"];
   return [10, 20, 30, 40, 50, 60, 80, 100].map(mk => {
     const pr = base * (1 + mk / 100);
     const lu = pr - (D.ind.ctKg || 0);
-    return '<tr' + (mk === Math.round(D.margemMarkup) ? ' class="hl"' : '') + '>' +
-      '<td>' + mk + '%</td>' +
-      '<td class="calc">' + fmtMoeda(pr) + '</td>' +
-      '<td class="calc">' + fmtMoeda(lu) + ' (' + (base > 0 ? fmt((lu / pr) * 100, 1) : "—") + '%)</td></tr>';
+    return '<tr><td>' + mk + '%</td><td class="calc">' + fmtMoeda(pr) + '</td><td class="calc">' + fmtMoeda(lu) + '</td></tr>';
   }).join("");
 }
+
 function tabBiometriasHTML() {
-  return '<section class="fade">' +
-      '<h2>Biometrias — acompanhamento do cultivo</h2>' +
-      '<p class="hint">Registre pesagens periódicas. O ganho de peso diário, PEC e produtividade são calculados automaticamente.</p>' +
-      '<table class="tbl"><thead><tr><th>#</th><th>Data</th><th>Peso médio (g)</th><th>Dias de cultivo</th><th>Ganho (g/dia)</th><th>Produção kg/viveiro/dia</th><th>PEC (kg/viveiro)</th><th>Produtividade (kg/ha/ano)</th></tr></thead><tbody>' +
-      S.biometrias.map((b, i) =>
-        '<tr><td>' + (i + 1) + '</td>' +
-          '<td>' + inputDate(b.data, "biometrias." + i + ".data") + '</td>' +
-          '<td>' + inputNum(b.pesoMedio, "biometrias." + i + ".pesoMedio") + '</td>' +
-          '<td class="calc">' + outSpan("bio" + (i + 1) + "-dias") + '</td>' +
-          '<td class="calc">' + outSpan("bio" + (i + 1) + "-ganho") + '</td>' +
-          '<td class="calc">' + outSpan("bio" + (i + 1) + "-vkd") + '</td>' +
-          '<td class="calc">' + outSpan("bio" + (i + 1) + "-pec") + '</td>' +
-          '<td class="calc">' + outSpan("bio" + (i + 1) + "-prod") + '</td></tr>'
-      ).join("") +
-      '</tbody></table>' +
-      '<div class="info" id="bio-info">Preencha as pesagens acima — os indicadores aparecem automaticamente.</div>' +
-      '<p class="note">Obs.: inclua uma linha com a data da estocagem e o peso dos alevinos para servir de referência às taxas de crescimento. Conforme a metodologia, esta etapa avalia a espécie principal (primeira da lista lançada).</p>' +
-    '</section>';
+  return '<section class="fade"><h2>Biometrias</h2>' +
+      '<table class="tbl"><thead><tr><th>#</th><th>Data</th><th>Peso médio (g)</th></tr></thead><tbody>' +
+      S.biometrias.map((b, i) => '<tr><td>' + (i + 1) + '</td><td>' + inputDate(b.data, "biometrias." + i + ".data") + '</td><td>' + inputNum(b.pesoMedio, "biometrias." + i + ".pesoMedio") + '</td></tr>').join("") +
+      '</tbody></table><div class="info" id="bio-info">Preencha as pesagens.</div></section>';
 }
+
 function tabAnalisesHTML() {
-  return '<section class="fade">' +
-      '<h2>Análises físico-químicas e microbiológicas da água</h2>' +
-      '<p class="hint">Parâmetros de qualidade da água do viveiro, seguindo a Planilha 6 da metodologia Embrapa. Informe a data e o resultado de cada análise.</p>' +
+  return '<section class="fade"><h2>Análises de água</h2>' +
       '<table class="tbl"><thead><tr><th>Parâmetro</th><th>Data</th><th>Resultado</th></tr></thead><tbody>' +
-      S.analises.map((a, i) =>
-        '<tr><td>' + esc(a.parametro) + '</td>' +
-          '<td>' + inputDate(a.data, "analises." + i + ".data") + '</td>' +
-          '<td>' + inputTxt(a.resultado, "analises." + i + ".resultado") + '</td></tr>'
-      ).join("") +
-      '</tbody></table>' +
-      '<p class="note">Esta etapa registra os laudos das análises de água. Eles documentam as condições do cultivo junto ao custo de produção.</p>' +
-    '</section>';
+      S.analises.map((a, i) => '<tr><td>' + esc(a.parametro) + '</td><td>' + inputDate(a.data, "analises." + i + ".data") + '</td><td>' + inputTxt(a.resultado, "analises." + i + ".resultado") + '</td></tr>').join("") +
+      '</tbody></table></section>';
 }
 
 function resolveOut(key, D, S) {
@@ -1015,9 +819,6 @@ function resolveOut(key, D, S) {
     case "dep-constr": return fmtMoeda(D.depConstrucao);
     case "dep-eq": return fmtMoeda(D.deprecEquip);
     case "v-moc": return fmtMoeda(defValue(S.maoDeObraConstrucao));
-    case "vol-aterro": return fmt(D.volumeAterro, 1);
-    case "horas-maq": return fmt(D.horasMaquinaTotal, 0);
-    case "esterco-ton": return fmt(D.estercoTon, 2);
     case "out-alev": return fmtMoeda(D.coeItens[0].valor);
     case "out-mob": return fmtMoeda(D.coeItens[1].valor);
     case "out-r1": return fmtMoeda(defValue(S.quantitativos.racao1Qtd) * defValue(S.quantitativos.racao1Preco));
@@ -1038,12 +839,6 @@ function resolveOut(key, D, S) {
     case "out-outros": return fmtMoeda(defValue(S.quantitativos.outrosOperacionais));
     case "out-arrend": return fmtMoeda(defValue(S.quantitativos.arrendamento));
     case "out-prolab": return fmtMoeda(defValue(S.quantitativos.proLaboreSalario));
-    case "prec-base": {
-      const base = D.ind[D.markupModalidade === "cot" ? "cotKg" : "ctKg"];
-      return fmtMoeda(base);
-    }
-    case "prec-sugerido": return fmtMoeda(precoSugerido(D));
-    case "prec-lucro": return fmtMoeda(lucroUnico(D));
   }
   if (key.indexOf("vmaq/") === 0) { const m = S.maquinas[+key.slice(5)]; return m ? fmtMoeda(defValue(m.qtd) * defValue(m.preco)) : "—"; }
   if (key.indexOf("vmat/") === 0) { const m = S.materiais[+key.slice(5)]; return m ? fmtMoeda(defValue(m.qtd) * defValue(m.preco)) : "—"; }
@@ -1053,16 +848,6 @@ function resolveOut(key, D, S) {
     if (!e) return "—";
     return defValue(e.vidaUtil) > 0 ? fmtMoeda((defValue(e.qtd) * defValue(e.preco)) / defValue(e.vidaUtil)) : "—";
   }
-  if (key.indexOf("bio") === 0 && key.indexOf("-dias") !== -1) { const b = findBio(D, key); return b ? fmt(b.dias, 0) : "—"; }
-  if (key.indexOf("bio") === 0 && key.indexOf("-ganho") !== -1) { const b = findBio(D, key); return b ? fmt(b.ganhoDia, 1) : "—"; }
-  if (key.indexOf("bio") === 0 && key.indexOf("-vkd") !== -1) { const b = findBio(D, key); return b ? fmt(b.viveiroKgDia, 2) : "—"; }
-  if (key.indexOf("bio") === 0 && key.indexOf("-pec") !== -1) { const b = findBio(D, key); return b ? fmt(b.pec, 2) : "—"; }
-  if (key.indexOf("bio") === 0 && key.indexOf("-prod") !== -1) { const b = findBio(D, key); return b ? fmt(b.produtividade, 0) : "—"; }
-  return null;
-}
-function findBio(D, key) {
-  const n = parseInt(key.replace(/[^\d]/g, ""), 10);
-  for (let i = 0; i < D.bioComp.length; i++) { if (D.bioComp[i].idx === n) return D.bioComp[i]; }
   return null;
 }
 
@@ -1071,9 +856,7 @@ function boot() {
   S = saved ? deepMerge(defaultState(), saved) : defaultState();
   if (!S.analises || !S.analises.length) S.analises = parametrosPadraoToAnalises();
   initAnaliseDates();
-  saveStatus = saved ? "Sessão restaurada do armazenamento interno" : "";
   render();
-  if (saved) showToast("Dados restaurados deste navegador.");
 }
 boot();
 </script>
