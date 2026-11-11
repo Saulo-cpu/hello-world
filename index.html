@@ -459,7 +459,11 @@ function esc(s) {
   return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&quot;").replace(/>/g, "&lt;").replace(/>/g, "&gt;");
 }
 function escAttr(s) {
-  return String(s == null ? "" : s).replace(/&/g, "&").replace(/"/g, """).replace(/</g, "<").replace(/>/g, ">");
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 function inputNum(value, path) {
   return '<input type="number" min="0" step="any" class="inp num" data-path="' + escAttr(path) + '" data-num="1" value="' + (Number(value) || 0) + '">';
