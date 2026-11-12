@@ -320,16 +320,31 @@ function defaultState() {
       { id: 10, nome: "Veículo", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
       { id: 11, nome: "Depósito", unidade: "m²", qtd: 0, preco: 0, vidaUtil: 0 },
       { id: 12, nome: "Escritório", unidade: "m²", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 13, nome: "Cabos elétricos 1,5", unidade: "mm²", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 13, nome: "Cabos elétricos 2,5", unidade: "mm²", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 13, nome: "Disjuntor 10", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 13, nome: "Disjuntor C6", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 13, nome: "Disjuntor 10", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 13, nome: "Disjuntor 10", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 14, nome: "Gerador elétrico", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 15, nome: "Balança", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 16, nome: "Oxímetro", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
-      { id: 17, nome: "Kit de análise de água", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 }
+      { id: 13, nome: "Cb. elét. 1,5", unidade: "mm²", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 14, nome: "Cb. elét. 2,5", unidade: "mm²", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 15, nome: "Cb. elét. 4", unidade: "mm²", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 16, nome: "Cb. elét. 6", unidade: "mm²", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 17, nome: "Cb. elét. 10", unidade: "mm²", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 18, nome: "Disj. 10", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 19, nome: "Disj. 6 curva C", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 20, nome: "Cb. elet. pp 3 vias 2iso.", unidade: "mm²", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 21, nome: "Fita autofusão", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 22, nome: "Fita isolante", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 23, nome: "Disjuntor geral", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 24, nome: "DPS", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 25, nome: "DR", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 26, nome: "Terminais elet.", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 27, nome: "Etiquetas de ident.", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 28, nome: "Quadro de distribuição", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 29, nome: "Cb. Multiplex", unidade: "m", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 30, nome: "Haste de aterramento 2,4", unidade: "m", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 31, nome: "Conector tipo grampo", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 32, nome: "Cabo de aterramento", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 33, nome: "Lâmpada 12/15 W", unidade: "A", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 34, nome: "Gerador elétrico", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 55, nome: "Balança", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 36, nome: "Oxímetro", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 },
+      { id: 37, nome: "Kit de análise de água", unidade: "Unidade", qtd: 0, preco: 0, vidaUtil: 0 }
     ],
     manutencaoEquipamentos: 0,
     biometrias: Array.from({ length: 12 }, () => ({ data: "", pesoMedio: "" })),
@@ -631,10 +646,10 @@ function tabsBarHTML() {
   ).join("") + "</nav>";
 }
 function footerHTML() {
-  return '<footer class="foot">Créditos metodológicos: Jorge de Matos Casaca e Fernanda Queiróz e Silva (Embrapa).</footer>';
+  return '<footer class="foot">Créditos metodológicos: Adaptado de Casaca e Silva (Epagri-SC).</footer>';
 }
 function orientacoesHTML() {
-  return '<details class="orient"><summary>Orientações de uso (metodologia Embrapa)</summary><ul>' +
+  return '<details class="orient"><summary>Orientações de uso (metodologia adaptada de Epagri-SC)</summary><ul>' +
     "<li>Preencha os dados nas etapas ①/② (e depois ⑦/⑧): as demais etapas exibem os resultados das fórmulas.</li>" +
     "<li>Projetado para viveiros escavados e tanques revestidos/geomembrana.</li>" +
   "</ul></details>";
