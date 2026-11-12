@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Precificador de Piscicultura — Versão Zootécnica e Ambiental</title>
 <style>
-.app-root{--bg:#f4f8fa;--surface:#ffffff;--ink:#12303b;--ink2:#5b7784;--line:#dde7ec;--accent:#0e7490;--accent2:#0f9ba8;--green:#15803d;--orange:#b45309;--purple:#7e22ce;--red:#b91c1c;--blue:#1d4ed8;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:40px}
-@media (prefers-color-scheme:dark){.app-root{--bg:#0d1b20;--surface:#162a31;--ink:#e5f1f5;--ink2:#9db4bd;--line:#26414b;--accent:#22b8cf;--accent2:#2dd4bf}}
+:root{--bg:#f4f8fa;--surface:#ffffff;--ink:#12303b;--ink2:#5b7784;--line:#dde7ec;--accent:#0e7490;--accent2:#0f9ba8;--green:#15803d;--orange:#b45309;--purple:#7e22ce;--red:#b91c1c;--blue:#1d4ed8}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1b20;--surface:#162a31;--ink:#e5f1f5;--ink2:#9db4bd;--line:#26414b;--accent:#22b8cf;--accent2:#2dd4bf}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding-bottom:40px}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:12px}
 .logo{font-size:1.6rem}
@@ -38,10 +38,8 @@ input.num{text-align:right;font-variant-numeric:tabular-nums}
 .tbl tbody tr:last-child td{border-bottom:none}
 .tbl tbody tr:hover{background:rgba(14,116,144,.04)}
 .tbl td.calc{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.tbl tr.total td{background:rgba(14,116,144,.1);font-weight:800}
 .subtotal{background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:8px 12px;font-size:.86rem;margin:10px 0}
-.info{background:rgba(14,116,144,.07);border-left:3px solid var(--accent);padding:8px 12px;border-radius:6px;font-size:.82rem;margin:10px 0}
-.infobox{background:rgba(14,116,144,.07);border-left:3px solid var(--accent);padding:10px 12px;border-radius:6px;font-size:.86rem;margin:8px 0;grid-column:1/-1}
+.info,.infobox{background:rgba(14,116,144,.07);border-left:3px solid var(--accent);padding:10px 12px;border-radius:6px;font-size:.86rem;margin:8px 0}
 .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.72rem;font-weight:700}
 .badge.green{background:rgba(21,128,61,.12);color:var(--green)}
 .badge.orange{background:rgba(180,83,9,.12);color:var(--orange)}
@@ -53,18 +51,16 @@ input.num{text-align:right;font-variant-numeric:tabular-nums}
 .card-ind .val{font-size:1.25rem;font-weight:800;margin-top:6px;font-variant-numeric:tabular-nums}
 .card-ind .sub{font-size:.76rem;color:var(--ink2);margin-top:3px}
 .val.blue{color:var(--blue)}.val.green{color:var(--green)}.val.orange{color:var(--orange)}.val.purple{color:var(--purple)}.val.red{color:var(--red)}
-details.orient{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:18px}
-details.orient summary{cursor:pointer;font-weight:700;font-size:.86rem;color:var(--accent)}
-details.orient ul{margin:8px 0 0;padding-left:18px;font-size:.82rem;color:var(--ink2);line-height:1.6}
 .foot{max-width:1180px;margin:26px auto 0;padding:14px 16px;font-size:.72rem;color:var(--ink2);border-top:1px solid var(--line)}
 .chart-box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}
 .chart-box h4{margin:0 0 10px;font-size:.92rem;color:var(--accent)}
-input.inp, select.inp, textarea { color: var(--ink) !important; background-color: var(--surface) !important; }
+input.inp, select.inp { color: var(--ink) !important; background-color: var(--surface) !important; }
 option { background-color: var(--surface); color: var(--ink); }
 </style>
 </head>
 <body>
-<div class="app-root" id="root"></div>
+<div id="root"></div>
+
 <script>
 "use strict";
 const defValue = v => (v === "" || v === null || v === undefined ? 0 : Number(v));
@@ -145,7 +141,6 @@ function computeAll(S) {
     mlu: seguranca((receitaBruta - cotTotal) / producaoTotalKg), ml: seguranca(((receitaBruta - cotTotal) / receitaBruta) * 100)
   };
 
-  // Processamento técnico das biometrias
   const biometriasProc = [];
   let pesoAnterior = defValue(q.alevinosPesoMedio);
   let dataAnterior = cul.dataEstocagem ? new Date(cul.dataEstocagem) : null;
@@ -174,7 +169,6 @@ function computeAll(S) {
   return { S, D: { periodoCultivo, totalMaquinas, totalMateriais, valorEquipamentos, deprecEquip, alevinosTotalQtd, alevinosPrecoMedio, producaoTotalKg, receitaBruta, receitaPescado, precoMedioVenda, pesoMedioFinalGlobal, biomassaInicial, depConstrucao, depAbastecimento, custoTotalViveiro, depreciacaoAnualTotal, coeItens, coeTotal, cotTotal, custoTotal, ind, biometriasProc } };
 }
 
-// Validador de parâmetros de água com faixas de referência
 function avaliarParametroAgua(parametro, valorNum) {
   if (isNaN(valorNum)) return { status: "normal", texto: "Não avaliado" };
   const p = parametro.toLowerCase();
@@ -193,12 +187,7 @@ function avaliarParametroAgua(parametro, valorNum) {
     if (valorNum < 24 || valorNum > 32) return { status: "orange", texto: "Alerta (Ideal 24-32°C)" };
     return { status: "green", texto: "Ideal (24-32°C)" };
   }
-  if (p.includes("amônia")) {
-    if (valorNum > 0.5) return { status: "red", texto: "Tóxico (> 0.5 mg/L)" };
-    if (valorNum > 0.1) return { status: "orange", texto: "Atenção (> 0.1 mg/L)" };
-    return { status: "green", texto: "Seguro (< 0.1 mg/L)" };
-  }
-  if (p.includes("nitrito")) {
+  if (p.includes("amônia") || p.includes("nitrito")) {
     if (valorNum > 0.5) return { status: "red", texto: "Tóxico (> 0.5 mg/L)" };
     if (valorNum > 0.1) return { status: "orange", texto: "Atenção (> 0.1 mg/L)" };
     return { status: "green", texto: "Seguro (< 0.1 mg/L)" };
@@ -413,7 +402,7 @@ function tabGeralHTML() {
     '<label>Data da despesca (ou previsão)<br>' + inputDate(S.cultivo.dataDespesca, "cultivo.dataDespesca") + '</label>' +
     '<div class="infobox">Período de cultivo: <b>' + outSpan("periodo") + '</b></div>' +
     '</div><h3>Espécies</h3>' +
-    '<table class="tbl"><thead><tr><th>Espécie</th><th>Peso final (g)</th><th>Qtd (kg)</th><th>Preço (R\$/kg)</th></tr></thead><tbody>' +
+    '<table class="tbl"><thead><tr><th>Espécie</th><th>Peso final (g)</th><th>Qtd (kg)</th><th>Preço (R$/kg)</th></tr></thead><tbody>' +
     S.especies.map((e, i) => '<tr><td>' + inputTxt(e.nome, "especies." + i + ".nome") + '</td><td>' + inputNum(e.pesoMedioFinal, "especies." + i + ".pesoMedioFinal") + '</td><td>' + inputNum(e.qtd, "especies." + i + ".qtd") + '</td><td>' + inputNum(e.precoUnit, "especies." + i + ".precoUnit") + '</td></tr>').join("") +
     '</tbody></table></section>';
 }
@@ -422,9 +411,9 @@ function tabLevantamentoHTML() {
   return '<section class="fade"><h2>Levantamento de Insumos</h2><div class="grid2">' +
     '<label>Quantidade de alevinos (unid)<br>' + inputNum(S.quantitativos.alevinosQtd, "quantitativos.alevinosQtd") + '</label>' +
     '<label>Peso médio inicial (g)<br>' + inputNum(S.quantitativos.alevinosPesoMedio, "quantitativos.alevinosPesoMedio") + '</label>' +
-    '<label>Preço unitário alevino (R\$)<br>' + inputNum(S.quantitativos.alevinosPrecoUnit, "quantitativos.alevinosPrecoUnit") + '</label>' +
+    '<label>Preço unitário alevino (R$)<br>' + inputNum(S.quantitativos.alevinosPrecoUnit, "quantitativos.alevinosPrecoUnit") + '</label>' +
     '<label>Ração total 1 (kg)<br>' + inputNum(S.quantitativos.racao1Qtd, "quantitativos.racao1Qtd") + '</label>' +
-    '<label>Preço ração 1 (R\$/kg)<br>' + inputNum(S.quantitativos.racao1Preco, "quantitativos.racao1Preco") + '</label>' +
+    '<label>Preço ração 1 (R$/kg)<br>' + inputNum(S.quantitativos.racao1Preco, "quantitativos.racao1Preco") + '</label>' +
     '</div></section>';
 }
 
@@ -457,4 +446,94 @@ function tabPrecificacaoHTML() {
   return '<section class="fade"><h2>Precificação</h2><div class="grid2">' +
     '<label>Base ' + selectHTML(S.markupModalidade, "markupModalidade", [{ v: "cot", l: "COT/kg" }, { v: "ct", l: "CT/kg" }]) + '</label>' +
     '<label>Markup desejado (%) ' + inputNum(S.margemMarkup, "margemMarkup") + '</label>' +
-    '</div><div class="cards"><div class="card-ind"><div class="lbl">Preço Sugerido</div><div class="val green">' + fmtMoeda(sugerido) + '/
+    '</div><div class="cards"><div class="card-ind"><div class="lbl">Preço Sugerido</div><div class="val green">' + fmtMoeda(sugerido) + '/kg</div></div></div></section>';
+}
+
+function tabBiometriasHTML() {
+  const { D } = computeAll(S);
+  const procs = D.biometriasProc;
+
+  let svgChart = '';
+  if (procs.length > 0) {
+    const maxPeso = Math.max(...procs.map(p => p.peso), 100);
+    const width = 600, height = 200, pad = 40;
+    const pts = procs.map((p, i) => {
+      const x = pad + (i / Math.max(procs.length - 1, 1)) * (width - 2 * pad);
+      const y = height - pad - (p.peso / maxPeso) * (height - 2 * pad);
+      return { x, y, ...p };
+    });
+    svgChart = '<div class="chart-box"><h4>Gráfico de Evolução do Peso dos Peixes (g)</h4>' +
+      '<svg viewBox="0 0 ' + width + ' ' + height + '" style="width:100%;height:auto">' +
+      '<line x1="' + pad + '" y1="' + (height - pad) + '" x2="' + (width - pad) + '" y2="' + (height - pad) + '" stroke="currentColor" stroke-opacity="0.3"/>' +
+      '<line x1="' + pad + '" y1="' + pad + '" x2="' + pad + '" y2="' + (height - pad) + '" stroke="currentColor" stroke-opacity="0.3"/>' +
+      '<polyline fill="none" stroke="var(--accent)" stroke-width="3" points="' + pts.map(pt => pt.x + ',' + pt.y).join(' ') + '"/>' +
+      pts.map(pt => '<circle cx="' + pt.x + '" cy="' + pt.y + '" r="4" fill="var(--accent2)"/><text x="' + pt.x + '" y="' + (height - 15) + '" font-size="10" fill="currentColor" text-anchor="middle">Dia ' + pt.diasTotal + '</text>').join('') +
+      '</svg></div>';
+  }
+
+  return '<section class="fade"><h2>Acompanhamento Técnico: Biometrias</h2>' +
+    '<p class="hint">Insira as datas das pesagens e o peso médio amostrado. O sistema calcula automaticamente o ganho diário, biomassa e TCE.</p>' +
+    '<table class="tbl"><thead><tr><th>#</th><th>Data</th><th>Peso Médio (g)</th><th>Dias Cultivo</th><th>Ganho Diário (g/dia)</th><th>Biomassa Est. (kg)</th><th>TCE (%/dia)</th></tr></thead><tbody>' +
+    S.biometrias.map((b, i) => {
+      const proc = procs.find(p => p.idx === i + 1) || {};
+      return '<tr>' +
+        '<td>' + (i + 1) + '</td>' +
+        '<td>' + inputDate(b.data, "biometrias." + i + ".data") + '</td>' +
+        '<td>' + inputNum(b.pesoMedio, "biometrias." + i + ".pesoMedio") + '</td>' +
+        '<td class="calc">' + (proc.diasTotal !== undefined ? proc.diasTotal + " d" : "—") + '</td>' +
+        '<td class="calc">' + (proc.ganhoDiario !== undefined ? fmt(proc.ganhoDiario, 2) + " g" : "—") + '</td>' +
+        '<td class="calc">' + (proc.biomassaEstimada !== undefined ? fmt(proc.biomassaEstimada, 1) + " kg" : "—") + '</td>' +
+        '<td class="calc">' + (proc.tce !== undefined ? fmt(proc.tce, 2) + "%" : "—") + '</td>' +
+      '</tr>';
+    }).join("") +
+    '</tbody></table>' + svgChart + '</section>';
+}
+
+function tabAnalisesHTML() {
+  const { D } = computeAll(S);
+  let alertasIntegrados = [];
+  if (S.analises && S.biometriasProc) {
+    S.analises.forEach(a => {
+      if (!a.data || !a.resultado) return;
+      const valNum = Number(a.resultado.replace(",", "."));
+      const aval = avaliarParametroAgua(a.parametro, valNum);
+      if (aval.status === "red" || aval.status === "orange") {
+        const dataAnalise = new Date(a.data);
+        D.biometriasProc.forEach(b => {
+          if (!b.data) return;
+          const dataBio = new Date(b.data);
+          const diffDias = Math.round((dataBio - dataAnalise) / 86400000);
+          if (diffDias >= 0 && diffDias <= 15 && b.ganhoDiario < 1.0) {
+            alertasIntegrados.push('Em <b>' + a.data + '</b> o parâmetro <b>' + a.parametro + '</b> apresentou valor crítico (<b>' + a.resultado + '</b>). Houve registro de biometria próxima (Dia ' + b.diasTotal + ') com ganho reduzido (<b>' + fmt(b.ganhoDiario, 2) + ' g/dia</b>).');
+          }
+        });
+      }
+    });
+  }
+
+  return '<section class="fade"><h2>Acompanhamento Ambiental: Qualidade da Água</h2>' +
+    '<p class="hint">Monitore os parâmetros físico-químicos com classificação automática de risco e alerta técnico integrado.</p>' +
+    (alertasIntegrados.length > 0 ? '<div class="infobox" style="border-left-color:var(--orange)"><b>⚠️ Associação Temporal Detectada:</b><ul>' + alertasIntegrados.map(al => '<li>' + al + '</li>').join('') + '</ul></div>' : '') +
+    '<table class="tbl"><thead><tr><th>Parâmetro</th><th>Data</th><th>Resultado</th><th>Classificação Automática</th></tr></thead><tbody>' +
+    S.analises.map((a, i) => {
+      const valNum = Number(String(a.resultado).replace(",", "."));
+      const aval = avaliarParametroAgua(a.parametro, valNum);
+      return '<tr>' +
+        '<td>' + esc(a.parametro) + '</td>' +
+        '<td>' + inputDate(a.data, "analises." + i + ".data") + '</td>' +
+        '<td>' + inputTxt(a.resultado, "analises." + i + ".resultado") + '</td>' +
+        '<td><span class="badge ' + aval.status + '">' + aval.texto + '</span></td>' +
+      '</tr>';
+    }).join("") +
+    '</tbody></table></section>';
+}
+
+function boot() {
+  const saved = loadState();
+  if (saved) S = deepMerge(defaultState(), saved);
+  render();
+}
+boot();
+</script>
+</body>
+</html>
