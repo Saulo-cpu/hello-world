@@ -309,14 +309,14 @@ function defaultState() {
     tab: "geral",
     cultivo: { produtor: "", localidade: "", municipio: "", dataAnalise: hojeISO(), numeroViveiro: "", areaViveiro: 0, numeroCultivo: "", dataEstocagem: "", dataDespesca: "", elaborador: "" },
     especies: [
-      { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
-      { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
+      { nome: "Tambaqui", pesoMedioFinal: 1500, qtd: 0, precoUnit: 0 },
+      { nome: "Tilápia", pesoMedioFinal: 800, qtd: 0, precoUnit: 0 },
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 },
       { nome: "", pesoMedioFinal: 0, qtd: 0, precoUnit: 0 }
     ],
-    outrasReceitas: 0, dolar: 5.56,
+    outrasReceitas: 0, dolar: 5.5,
     percentuais: { jurosCapital: 0, jurosTerra: 0, producaoEstercoDia: 0, materiaSecaEsterco: 0 },
     quantitativos: {
       terraHa: 0, precoTerra: 0, horasMaquinaManual: 0, comprimentoAterro: 0, alturaAterro: 0, baseMaiorAterro: 0, baseMenorAterro: 0,
@@ -630,6 +630,7 @@ function updateLive() {
 
 const TABS = [
   { id: "geral", label: "① Dados gerais" },
+  { id: "odt", label: "📄 Planilha Levantamento (.odt)" },
   { id: "levantamento", label: "② Levantamento" },
   { id: "implantacao", label: "③ Custo de implantação" },
   { id: "operacional", label: "④ Custos operacionais" },
@@ -741,6 +742,7 @@ function render() {
   if (!root) return;
   let html = topbarHTML() + tabsBarHTML() + '<main class="content">';
   switch (S.tab) {
+    case "odt": html += tabOdtHTML(); break;
     case "geral": html += tabGeralHTML(); break;
     case "levantamento": html += tabLevantamentoHTML(); break;
     case "implantacao": html += tabImplantacaoHTML(); break;
@@ -1097,6 +1099,86 @@ function tabAnalisesHTML() {
   return '<section class="fade"><h2>Análises de água</h2>' +
       '<table class="tbl"><thead><tr><th>Parâmetro</th><th>Data</th><th>Resultado</th></tr></thead><tbody>' +
       S.analises.map((a, i) => '<tr><td>' + esc(a.parametro) + '</td><td>' + inputDate(a.data, "analises." + i + ".data") + '</td><td>' + inputTxt(a.resultado, "analises." + i + ".resultado") + '</td></tr>').join("") +
+      '</tbody></table></section>';
+}
+
+
+function tabOdtHTML() {
+  return '<section class="fade"><h2>Planilha 1: Levantamento de dados (.odt)</h2>' +
+      '<p class="hint">Sequência exata dos dados e parâmetros conforme o documento de levantamento original.</p>' +
+      '<table class="tbl"><thead><tr><th>#</th><th>Item / Descrição</th><th>Unidade</th><th>Quantidade / Valor</th><th>Preço Unitário (R$)</th></tr></thead><tbody>' +
+      '<tr><td colspan="5" style="background:rgba(14,116,144,0.1);font-weight:700">Informações gerais</td></tr>' +
+      '<tr><td>1</td><td>Nome do proprietário</td><td>—</td><td colspan="2">' + inputTxt(S.cultivo.produtor, "cultivo.produtor") + '</td></tr>' +
+      '<tr><td>2</td><td>Localidade</td><td>—</td><td colspan="2">' + inputTxt(S.cultivo.localidade, "cultivo.localidade") + '</td></tr>' +
+      '<tr><td>3</td><td>Município/Estado</td><td>—</td><td colspan="2">' + inputTxt(S.cultivo.municipio, "cultivo.municipio") + '</td></tr>' +
+      '<tr><td>4</td><td>Data da análise do custo de produção</td><td>Data</td><td colspan="2">' + inputDate(S.cultivo.dataAnalise, "cultivo.dataAnalise") + '</td></tr>' +
+      '<tr><td>5</td><td>Número do viveiro</td><td>Número</td><td colspan="2">' + inputTxt(S.cultivo.numeroViveiro, "cultivo.numeroViveiro") + '</td></tr>' +
+      '<tr><td>6</td><td>Área do viveiro</td><td>ha</td><td colspan="2">' + inputNum(S.cultivo.areaViveiro, "cultivo.areaViveiro") + '</td></tr>' +
+      '<tr><td>7</td><td>Número do cultivo</td><td>Número</td><td colspan="2">' + inputTxt(S.cultivo.numeroCultivo, "cultivo.numeroCultivo") + '</td></tr>' +
+      '<tr><td>8</td><td>Data estocagem do viveiro</td><td>Data</td><td colspan="2">' + inputDate(S.cultivo.dataEstocagem, "cultivo.dataEstocagem") + '</td></tr>' +
+      '<tr><td>9</td><td>Data de despesca do viveiro</td><td>Data</td><td colspan="2">' + inputDate(S.cultivo.dataDespesca, "cultivo.dataDespesca") + '</td></tr>' +
+      '<tr><td>10</td><td>Período de cultivo</td><td>Dias</td><td colspan="2"><b>' + outSpan("periodo") + '</b></td></tr>' +
+      
+      '<tr><td colspan="5" style="background:rgba(14,116,144,0.1);font-weight:700">Construção / Máquinas</td></tr>' +
+      S.maquinas.map((m, i) => '<tr><td>' + (11 + i) + '</td><td>' + esc(m.nome) + '</td><td>' + esc(m.unidade) + '</td><td>' + inputNum(m.qtd, "maquinas." + i + ".qtd") + '</td><td>' + inputNum(m.preco, "maquinas." + i + ".preco") + '</td></tr>').join("") +
+      
+      '<tr><td colspan="5" style="background:rgba(14,116,144,0.1);font-weight:700">Construção / Materiais</td></tr>' +
+      S.materiais.slice(0, 10).map((m, i) => '<tr><td>' + (17 + i) + '</td><td>' + esc(m.nome) + '</td><td>' + esc(m.unidade) + '</td><td>' + inputNum(m.qtd, "materiais." + i + ".qtd") + '</td><td>' + inputNum(m.preco, "materiais." + i + ".preco") + '</td></tr>').join("") +
+      '<tr><td>27</td><td>Mão-de-obra na construção</td><td>R$</td><td colspan="2">' + inputNum(S.maoDeObraConstrucao, "maoDeObraConstrucao") + '</td></tr>' +
+      '<tr><td>28</td><td>Manutenção na construção</td><td>R$</td><td colspan="2">' + inputNum(S.manutencaoConstrucao, "manutencaoConstrucao") + '</td></tr>' +
+      '<tr><td>29</td><td>Vida útil da construção</td><td>Anos</td><td colspan="2">' + inputNum(S.vidaUtilConstrucao, "vidaUtilConstrucao") + '</td></tr>' +
+
+      '<tr><td colspan="5" style="background:rgba(14,116,144,0.1);font-weight:700">Construção / Equipamentos</td></tr>' +
+      S.equipamentos.slice(0, 15).map((e, i) => '<tr><td>' + (30 + i) + '</td><td>' + esc(e.nome) + '</td><td>' + esc(e.unidade) + '</td><td>' + inputNum(e.qtd, "equipamentos." + i + ".qtd") + '</td><td>' + inputNum(e.preco, "equipamentos." + i + ".preco") + '</td></tr>').join("") +
+      '<tr><td>45</td><td>Depreciação média</td><td>Anos</td><td colspan="2">' + outSpan("dep-eq") + '</td></tr>' +
+      '<tr><td>46</td><td>Manutenção de equipamentos</td><td>R$</td><td colspan="2">' + inputNum(S.manutencaoEquipamentos, "manutencaoEquipamentos") + '</td></tr>' +
+
+      '<tr><td colspan="5" style="background:rgba(14,116,144,0.1);font-weight:700">Outros custos</td></tr>' +
+      '<tr><td>47</td><td>Terra</td><td>ha</td><td colspan="2">' + inputNum(S.quantitativos.terraHa, "quantitativos.terraHa") + '</td></tr>' +
+      '<tr><td>48</td><td>Juros sobre a terra</td><td>%</td><td colspan="2">' + inputNum(S.percentuais.jurosTerra, "percentuais.jurosTerra") + '</td></tr>' +
+      '<tr><td>49</td><td>Juros sobre o capital mobilizado</td><td>%</td><td colspan="2">' + inputNum(S.percentuais.jurosCapital, "percentuais.jurosCapital") + '</td></tr>' +
+
+      '<tr><td colspan="5" style="background:rgba(14,116,144,0.1);font-weight:700">Custos operacionais do cultivo</td></tr>' +
+      '<tr><td>50</td><td>Total de Alevinos</td><td>Unidade</td><td>' + inputNum(S.quantitativos.alevinosQtd, "quantitativos.alevinosQtd") + '</td><td>' + inputNum(S.quantitativos.alevinosPrecoUnit, "quantitativos.alevinosPrecoUnit") + '</td></tr>' +
+      '<tr><td>51</td><td>Mão de obra cultivo + encargos</td><td>hora</td><td colspan="2">' + inputNum(S.quantitativos.maoDeObraCultivoHoras, "quantitativos.maoDeObraCultivoHoras") + '</td></tr>' +
+      '<tr><td>52</td><td>Ração 1</td><td>kg</td><td colspan="2">' + inputNum(S.quantitativos.racao1Qtd, "quantitativos.racao1Qtd") + '</td></tr>' +
+      '<tr><td>53</td><td>Ração 2</td><td>kg</td><td colspan="2">' + inputNum(S.quantitativos.racao2Qtd, "quantitativos.racao2Qtd") + '</td></tr>' +
+      '<tr><td>54</td><td>Fertilizante orgânico 1</td><td>t</td><td colspan="2">' + inputNum(S.quantitativos.fertOrg1Qtd, "quantitativos.fertOrg1Qtd") + '</td></tr>' +
+      '<tr><td>55</td><td>Fertilizante orgânico 2</td><td>t</td><td colspan="2">' + inputNum(S.quantitativos.fertOrg2Qtd, "quantitativos.fertOrg2Qtd") + '</td></tr>' +
+      '<tr><td>56</td><td>Fertilizante químico 1</td><td>kg</td><td colspan="2">' + inputNum(S.quantitativos.fertQuim1Qtd, "quantitativos.fertQuim1Qtd") + '</td></tr>' +
+      '<tr><td>57</td><td>Fertilizante químico 2</td><td>kg</td><td colspan="2">' + inputNum(S.quantitativos.fertQuim2Qtd, "quantitativos.fertQuim2Qtd") + '</td></tr>' +
+      '<tr><td>58</td><td>Calcário</td><td>t</td><td colspan="2">' + inputNum(S.quantitativos.calcarioQtd, "quantitativos.calcarioQtd") + '</td></tr>' +
+      '<tr><td>59</td><td>Cal virgem</td><td>t</td><td colspan="2">' + inputNum(S.quantitativos.calVirgemQtd, "quantitativos.calVirgemQtd") + '</td></tr>' +
+      '<tr><td>60</td><td>Combustível</td><td>litro</td><td colspan="2">' + inputNum(S.quantitativos.combustivelQtd, "quantitativos.combustivelQtd") + '</td></tr>' +
+      '<tr><td>61</td><td>Energia elétrica</td><td>kwh</td><td colspan="2">' + inputNum(S.quantitativos.energiaQtd, "quantitativos.energiaQtd") + '</td></tr>' +
+      '<tr><td>62</td><td>Análise da água</td><td>Unidade</td><td colspan="2">' + inputNum(S.quantitativos.analiseAguaQtd, "quantitativos.analiseAguaQtd") + '</td></tr>' +
+      '<tr><td>63</td><td>Transporte</td><td>km</td><td colspan="2">' + inputNum(S.quantitativos.transporteQtd, "quantitativos.transporteQtd") + '</td></tr>' +
+      '<tr><td>64</td><td>Assistência técnica</td><td>Visita</td><td colspan="2">' + inputNum(S.quantitativos.assistenciaQtd, "quantitativos.assistenciaQtd") + '</td></tr>' +
+      '<tr><td>65</td><td>Pró-labore</td><td>Salário</td><td colspan="2">' + inputNum(S.quantitativos.proLaboreSalario, "quantitativos.proLaboreSalario") + '</td></tr>' +
+      '<tr><td>66</td><td>Gastos administrativos e Financeiros</td><td>R$</td><td colspan="2">' + inputNum(S.quantitativos.gastosAdm, "quantitativos.gastosAdm") + '</td></tr>' +
+      '<tr><td>67</td><td>Medicamentos e Produtos químicos</td><td>R$</td><td colspan="2">' + inputNum(S.quantitativos.medicamentos, "quantitativos.medicamentos") + '</td></tr>' +
+      '<tr><td>68</td><td>Outros custos operacionais</td><td>R$</td><td colspan="2">' + inputNum(S.quantitativos.outrosOperacionais, "quantitativos.outrosOperacionais") + '</td></tr>' +
+      '<tr><td>69</td><td>Arrendamento</td><td>R$</td><td colspan="2">' + inputNum(S.quantitativos.arrendamento, "quantitativos.arrendamento") + '</td></tr>' +
+
+      '<tr><td colspan="5" style="background:rgba(14,116,144,0.1);font-weight:700">Cálculo do esterco animal e horas/máquinas</td></tr>' +
+      '<tr><td>70</td><td>Número de animais</td><td>Número</td><td colspan="2">' + inputNum(S.quantitativos.animais, "quantitativos.animais") + '</td></tr>' +
+      '<tr><td>71</td><td>Peso médio dos animais</td><td>kg</td><td colspan="2">' + inputNum(S.quantitativos.pesoAnimais, "quantitativos.pesoAnimais") + '</td></tr>' +
+      '<tr><td>72</td><td>Produção de esterco/dia</td><td>%</td><td colspan="2">' + inputNum(S.percentuais.producaoEstercoDia, "percentuais.producaoEstercoDia") + '</td></tr>' +
+      '<tr><td>73</td><td>Matéria seca de esterco produzido</td><td>%</td><td colspan="2">' + inputNum(S.percentuais.materiaSecaEsterco, "percentuais.materiaSecaEsterco") + '</td></tr>' +
+      '<tr><td>74</td><td>Quantidade de esterco produzido</td><td>t</td><td colspan="2">' + fmt(D.estercoTon, 2) + '</td></tr>' +
+      '<tr><td>75</td><td>Comprimento do aterro ( C )</td><td>m</td><td colspan="2">' + inputNum(S.quantitativos.comprimentoAterro, "quantitativos.comprimentoAterro") + '</td></tr>' +
+      '<tr><td>76</td><td>Altura do aterro ( h )</td><td>m</td><td colspan="2">' + inputNum(S.quantitativos.alturaAterro, "quantitativos.alturaAterro") + '</td></tr>' +
+      '<tr><td>77</td><td>Base maior do aterro ( B )</td><td>m</td><td colspan="2">' + inputNum(S.quantitativos.baseMaiorAterro, "quantitativos.baseMaiorAterro") + '</td></tr>' +
+      '<tr><td>78</td><td>Base menor do aterro ( b )</td><td>m</td><td colspan="2">' + inputNum(S.quantitativos.baseMenorAterro, "quantitativos.baseMenorAterro") + '</td></tr>' +
+      '<tr><td>79</td><td>Volume do aterro</td><td>m³</td><td colspan="2">' + fmt(D.volumeAterro, 2) + '</td></tr>' +
+      '<tr><td>80</td><td>Quantidade de horas/máquinas</td><td>h</td><td colspan="2">' + fmt(D.horasMaquinaTotal, 2) + '</td></tr>' +
+
+      '<tr><td colspan="5" style="background:rgba(14,116,144,0.1);font-weight:700">Produção / Receitas</td></tr>' +
+      S.especies.map((e, i) => '<tr><td>Sp.' + (i+1) + '</td><td>' + inputTxt(e.nome, "especies." + i + ".nome") + '</td><td>kg</td><td>' + inputNum(e.qtd, "especies." + i + ".qtd") + '</td><td>' + inputNum(e.precoUnit, "especies." + i + ".precoUnit") + '</td></tr>').join("") +
+      '<tr><td>81</td><td>Produção total</td><td>kg</td><td colspan="2">' + fmt(D.producaoTotalKg, 2) + '</td></tr>' +
+      '<tr><td>82</td><td>Outras receitas</td><td>R$</td><td colspan="2">' + inputNum(S.outrasReceitas, "outrasReceitas") + '</td></tr>' +
+      '<tr><td>83</td><td>Valor do dólar comercial</td><td>R$</td><td colspan="2">' + inputNum(S.dolar, "dolar") + '</td></tr>' +
+      '<tr><td>84</td><td>Custo de produção elaborado por</td><td>Nome</td><td colspan="2">' + inputTxt(S.cultivo.elaborador, "cultivo.elaborador") + '</td></tr>' +
       '</tbody></table></section>';
 }
 
