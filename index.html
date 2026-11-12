@@ -343,19 +343,19 @@ function setPath(obj, path, val) {
   cur[parts[parts.length - 1]] = val;
 }
 
-function esc(s) { 
+function esc(s) {
   return String(s == null ? "" : s)
-    .replace(/&/g, "&")
-    .replace(/</g, "<")
-    .replace(/>/g, ">"); 
+    .replace(/&/g, "\x26amp;")
+    .replace(/</g, "\x26lt;")
+    .replace(/>/g, "\x26gt;");
 }
 
-function escAttr(s) { 
+function escAttr(s) {
   return String(s == null ? "" : s)
-    .replace(/&/g, "&")
-    .replace(/"/g, """)
-    .replace(/</g, "<")
-    .replace(/>/g, ">"); 
+    .replace(/&/g, "\x26amp;")
+    .replace(/"/g, "\x26quot;")
+    .replace(/</g, "\x26lt;")
+    .replace(/>/g, "\x26gt;");
 }
 function inputNum(val, path) { return '<input type="number" min="0" step="any" class="inp num" data-path="' + escAttr(path) + '" data-num="1" value="' + (Number(val) || 0) + '">'; }
 function inputTxt(val, path) { return '<input type="text" class="inp" data-path="' + escAttr(path) + '" value="' + escAttr(val) + '">'; }
