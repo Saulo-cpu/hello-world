@@ -318,29 +318,19 @@
       </div>
 
       <h3>Apresentação</h3>
-      <p>O objetivo foi delineado para criar uma ferramenta que auxilie o produtor rural, como também técnicos, nas decisões referentes ao trabalho na sua propriedade, como na consultoria. Os técnicos que utilizam essa ferramenta podem análisar através de técnicas baseadas na teoria econômica, que abrangem custos de benfeitorias, receitas, relacionadas à piscicultura e à produção ao final do cultivo. Podem ser usadas para simulação de cultivos e resultados, usadas na tomada de decisão quanto à viabilidade econômica do cultivo.</p>
-      <p>O custo de produção é um recorte pontual, essas planilhas não substituem outras planilhas ou aplicativos que calculam a viabilidade econômica de projetos que envolvem a piscicultura.</p>
-      <p>O trabalho é um arquivo denominado: Planilhas para Cálculos do Custo de Produção de Peixes, desenvolvido com o programa de Planilha Microsoft Excel®, e apresenta sete pastas distintas para a execução dos cálculos:</p>
-      <ul>
-        <li>Apresentação;</li>
-        <li>Planilha 1 - Levantamento de dados;</li>
-        <li>Planilha 2 - Custo de implantação do viveiro;</li>
-        <li>Planilha 3 - Cálculo do custo de produção de peixes;</li>
-        <li>Planilha 4 – Resumo;</li>
-        <li>Planilha 5 - Biometrias;</li>
-        <li>Planilha 6 - Análises físico-químicas e microbiológicas.</li>
-      </ul>
+      <p>Muitas vezes, a precificação empírica praticada pelos piscicultores baseia-se exclusivamente no Custo Operacional Efetivo (COE). Ao desconsiderar a renda imputada e a depreciação dos ativos fixos, o produtor acaba transferindo sua renda patrimonial para o consumidor final na forma de um peixe subprecificado, o que compromete a sustentabilidade financeira de longo prazo e bloqueia a viabilidade econômica de pacotes tecnológicos mais intensivos.</p>
+      <p>O custo de produção é um recorte pontual; essas planilhas não substituem outras ferramentas ou aplicativos que calculam a viabilidade econômica de projetos complexos que envolvem a piscicultura.</p>
+      <p>O trabalho é um arquivo denominado: Planilhas para Cálculos do Custo de Produção de Peixes, desenvolvido por EPAGRI (SC), e apresenta pastas distintas para a execução dos cálculos.</p>
       <p>Os dados necessários para realizar os cálculos devem ser informados na <strong>Planilha 1 - Levantamento de dados</strong>, <strong>Planilha 5 – Biometrias</strong> e <strong>Planilha 6 - Análises físico-químicas e microbiológicas</strong> nas células de cor amarela.</p>
-      <p>Nas planilhas <strong>2 - Custo de implantação do viveiro</strong>, <strong>3 - Cálculo do custo de produção peixes</strong> e <strong>4 – Resumo</strong>, o usuário não terá acesso com dados.</p>
       <p>As planilhas estão protegidas para preservar os textos e as fórmulas.</p>
 
       <h3>Informações importantes sobre o uso da planilha:</h3>
       <ol>
         <li>Consultar o Manual de Uso para orientar o preenchimento da planilha;</li>
-        <li>A planilha pode ser usada para todos os tipos de produção extensiva, intensiva, semi-intensiva e superintensiva;</li>
+        <li>A planilha pode ser usada para todos os tipos de produção: extensiva, intensiva, semi-intensiva e superintensiva;</li>
         <li>Usar a planilha para calcular o custo de produção por cultivo e por viveiro;</li>
-        <li>É possível usar a planilha para calcular os sistemas de monocultivo ou policultivo, lembrando que a Planilha 5 – Biometria, apenas avalia a espécie principal (a primeira da lista digitada nos alevinos);</li>
-        <li>Os valores em reais (R$) das despesas e receitas devem ser atualizados para o dia da análise do custo de produção, evitando assim, a necessidade de realizar o cálculo do efeito da inflação sobre o período do cultivo;</li>
+        <li>É possível usar a planilha para calcular os sistemas de monocultivo ou policultivo, lembrando que a Planilha 5 – Biometria apenas avalia a espécie principal (a primeira da lista digitada nos alevinos);</li>
+        <li>Os valores em reais (R$) das despesas e receitas devem ser atualizados para o dia da análise do custo de produção, evitando assim a necessidade de calcular o efeito da inflação sobre o período do cultivo;</li>
         <li>Em relação aos valores da depreciação de bens e equipamentos, calcular proporcionalmente o uso de acordo com o viveiro que está sendo avaliado.</li>
       </ol>
 
@@ -1397,7 +1387,7 @@ function buildTable1() {
       <td class="bg-gray"></td>
     </tr>
     <tr>
-      <td colspan="7" class="bg-gray bold center">Créditos: Jorge de Matos Casaca e Fernanda Queiróz e Silva</td>
+      <td colspan="7" class="bg-gray bold center">Precificação da Piscicultura</td>
     </tr>
   `;
 
@@ -1581,7 +1571,7 @@ function buildTable2() {
       <td class="bg-blue num" id="p2-G50">0,00</td>
     </tr>
     <tr>
-      <td colspan="6" class="bg-coral">Créditos: Jorge de Matos Casaca e Fernanda Queiróz e Silva</td>
+     <td colspan="6" class="bg-coral">Precificação da Piscicultura</td>
     </tr>
   `;
 
@@ -1832,7 +1822,7 @@ function buildTable3() {
       <td colspan="6" class="bg-cyan-soft" id="p3-D82"></td>
     </tr>
     <tr>
-      <td colspan="7" class="bg-peach bold center">Créditos: Jorge de Matos Casaca e Fernanda Queiróz e Silva</td>
+     <td colspan="7" class="bg-peach bold center">Precificação da Piscicultura</td>
     </tr>
   `;
 
@@ -1888,7 +1878,7 @@ function buildTable4() {
       <td class="bg-blue-soft num bold" id="p4-G26">0,00</td>
     </tr>
     <tr>
-      <td colspan="3" class="bg-peach bold center">Créditos: Jorge de Matos Casaca e Fernanda Queiróz e Silva</td>
+     <td colspan="3" class="bg-peach bold center">Precificação da Piscicultura</td>
     </tr>
   `;
   t.innerHTML = html;
@@ -1955,7 +1945,7 @@ function buildTable5() {
     </tr>`;
   }
 
-  html += `<tr><td colspan="8" class="bg-gray bold center">Créditos da planilha: Jorge de Matos Casaca e Fernanda Queiróz e Silva</td></tr>`;
+  html += `<tr><td colspan="8" class="bg-gray bold center">Precificação da Piscicultura</td></tr>`;
   t.innerHTML = html;
 }
 
